@@ -2,7 +2,7 @@ import sys
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtUiTools import loadUiType
 # Custom import
-from app_class import *
+from modules.guiFunc import *
 
 qtObjName, qtObjClass = loadUiType('ui\\app.ui')
 
