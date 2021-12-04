@@ -5,11 +5,20 @@ import datetime
 # Custom import
 from main import MainWindow
 from modules.sideGrip import SideGrip
-from modules.qssStyle import appStyle
+from modules.qssStyle import appStyle, tableStyle
+import modules.images
 
 # Glaobal variable
 isMaximized = False
 
+
+class inputHandler(MainWindow):
+    # Detect and respond to special key press from keyboard
+    def keyCombination(self):
+        modifier = QtWidgets.QApplication.keyboardModifiers()
+        if modifier == QtCore.Qt.ShiftModifier:
+            pass
+        
 class guiFunction(MainWindow):
     
     def maximize(self):
@@ -20,6 +29,7 @@ class guiFunction(MainWindow):
         else:
             self.showNormal()
             isMaximized = False
+
     
     def toggleMenu(self, enable):
         width = self.ui.frame_leftMenu.width()
@@ -38,12 +48,47 @@ class guiFunction(MainWindow):
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
 
+
+    def decorateLeftMenu(self, btn):
+        btn_Name = btn.objectName()
+        frame_Name = btn.parent().objectName()
+        if (btn_Name[-4:] == 'Text'):
+            btn_Name = btn_Name[:len(btn_Name)-4]
+
+        dormant_btnStyle = """
+            QPushButton{
+                border-left: 3px solid transparent;
+            }
+        """
+        selected_btnStyle = ' #' + btn_Name + '{border-left: 3px solid red;}'
+        selected_frameStyle = ' #' + frame_Name + '{background-color: rgba(0,255,0,100);}'
+        reset_menuStyle = dormant_btnStyle + selected_btnStyle + selected_frameStyle
+        self.ui.frame_LMenuMdl.setStyleSheet(reset_menuStyle)
+
+        if btn_Name == 'btn_userMenu':
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
+        elif btn_Name == 'btn_stockMenu':
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
+        elif btn_Name == 'btn_exitMenu':
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
+            self.ui.frame_leftMenu.setMinimumWidth(0)
+            self.ui.frame_leftMenu.setMaximumWidth(0)
+        
+
     def updateGrips(self):
+        global isMaximized
+        if isMaximized: isMaximized = False
         self.left_grip.setGeometry(0, 10, 10, self.height())
         self.right_grip.setGeometry(self.width() - 10, 10, 10, self.height())
         self.top_grip.setGeometry(0, 0, self.width(), 10)
         self.bottom_grip.setGeometry(0, self.height() - 10, self.width(), 10)
-   
+    
+    # returns names of widgetType objects inside parent widget
+    def getWidgetName(self, widgetType, parentWidget):
+        for w in parentWidget.findChildren(widgetType):
+            widgetName = [name for name in w.objectNme()]
+        print (widgetName)
+
     def uiInit(self):
         # Make window frameless
         self.setWindowFlags(QtCore.Qt.WindowType.WindowSystemMenuHint.FramelessWindowHint)
@@ -51,9 +96,12 @@ class guiFunction(MainWindow):
         
         # Apply the stylesheet for mai application frame externa file
         self.ui.frame_app.setStyleSheet(appStyle)
+        self.ui.item_tbl.setStyleSheet(tableStyle)
         
         # Move the window with top bar
         def moveWindow(event):
+            global isMaximized
+            if isMaximized: return
             if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
                 self.move(self.pos() + event.globalPosition().toPoint() - self.dragPos)
                 self.dragPos = event.globalPosition().toPoint()
@@ -63,7 +111,13 @@ class guiFunction(MainWindow):
         # Maximize window by double clicking top bar
         def doubleClickMaximize(event):
             QtCore.QTimer.singleShot(250, lambda: guiFunction.maximize(self))
-        self.ui.frame_titleBar.mouseDoubleClickEvent = doubleClickMaximize
+        self.ui.frame_titleBar.Event = doubleClickMaximize
+
+        # Testing
+        
+        def closeApp(event):
+            self.close()
+        
 
         # Define the custom grips. Diagonal grips incorporated in top and bottom
         self.left_grip = SideGrip(self, QtCore.Qt.LeftEdge)
@@ -71,20 +125,34 @@ class guiFunction(MainWindow):
         self.top_grip = SideGrip(self, QtCore.Qt.TopEdge)
         self.bottom_grip = SideGrip(self, QtCore.Qt.BottomEdge)
 
+        # Modify QTableViews
+        self.ui.item_tbl.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
         self.ui.btn_minimizeApp.clicked.connect(lambda:self.showMinimized())
         self.ui.btn_maximizeApp.clicked.connect(lambda:guiFunction.maximize(self))
 
         # Signal-socket for buttons on left side menu
-        self.ui.btn_toggleMenu.clicked.connect(lambda: guiFunction.toggleMenu(self, True))
+        self.ui.btn_toggleMenu.clicked.connect(lambda:guiFunction.toggleMenu(self, True))
+        self.ui.btn_LMenuToggleText.clicked.connect(lambda:guiFunction.toggleMenu(self, True))
+        self.ui.btn_userMenu.clicked.connect(self.menuItemSelected)
+        self.ui.btn_userMenuText.clicked.connect(self.menuItemSelected)
+        self.ui.btn_stockMenu.clicked.connect(self.menuItemSelected)
+        self.ui.btn_stockMenuText.clicked.connect(self.menuItemSelected)
+        self.ui.btn_exitMenu.clicked.connect(self.menuItemSelected)
+        self.ui.btn_exitMenuText.clicked.connect(self.menuItemSelected)
         
+
         # initializing stacked-widget's password page
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
         
         self.ui.itemList_cmb.currentTextChanged.connect(lambda:appFunction.itemTypeChanged(self))
         self.ui.itemList_cmb.activated.connect(lambda:appFunction.itemTypeChanged(self))
+
+        self.ui.frame_leftMenu.setMinimumWidth(0)
+        self.ui.frame_leftMenu.setMaximumWidth(0)
      
 class appFunction(MainWindow):
     # Authenticate user or add user or change password
@@ -152,6 +220,7 @@ class appFunction(MainWindow):
             c = conn.cursor()
             c.execute(sqlQuery)
             val = c.fetchall()
+            self.ui.itemList_cmb.clear()
             self.ui.itemList_cmb.insertItems(0, [i[0] for i in val])
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
             guiFunction.toggleMenu(self, True)

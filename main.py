@@ -14,19 +14,21 @@ class MainWindow(qtObjClass):
         self.ui.setupUi(self)
 
         guiFunction.uiInit(self)
-        self.showMaximized()
+        self.showNormal()
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self.dragPos = event.globalPosition().toPoint()
-
+            
+    def menuItemSelected(self):
+        guiFunction.decorateLeftMenu(self, self.sender())
+     
     def resizeEvent(self, event):
         guiFunction.updateGrips(self)
 
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon("icon.ico"))
+    app.setWindowIcon(QtGui.QIcon(":/images/images/icon.ico"))
     w = MainWindow()
 
     try:

@@ -1,0 +1,26 @@
+<RCC>
+  <qresource prefix="images">
+    <file>../images/cil-check.png</file>
+    <file>../images/cil-clipboard.png</file>
+    <file>../images/cil-description.png</file>
+    <file>../images/cil-exit-to-app.png</file>
+    <file>../images/cil-external-link.png</file>
+    <file>../images/cil-file.png</file>
+    <file>../images/cil-folder.png</file>
+    <file>../images/cil-input.png</file>
+    <file>../images/cil-layers.png</file>
+    <file>../images/cil-loop-circular.png</file>
+    <file>../images/cil-paperclip.png</file>
+    <file>../images/cil-people.png</file>
+    <file>../images/cil-save.png</file>
+    <file>../images/cil-tags.png</file>
+    <file>../images/cil-transfer.png</file>
+    <file>../images/cil-view-column.png</file>
+    <file>../images/icon.ico</file>
+    <file>../images/icon_close.png</file>
+    <file>../images/icon_menu.png</file>
+    <file>../images/icon_minimize.png</file>
+    <file>../images/icon_restore.png</file>
+    <file>../images/icon_settings.png</file>
+  </qresource>
+</RCC>
