@@ -5,7 +5,7 @@ import datetime
 # Custom import
 from main import MainWindow
 from modules.sideGrip import SideGrip
-from modules.qssStyle import appStyle, tableStyle
+from modules.qssStyle import appStyle, stockViewStyle
 import modules.images
 
 # Glaobal variable
@@ -26,11 +26,18 @@ class guiFunction(MainWindow):
         if not isMaximized:
             self.showMaximized()
             isMaximized = True
+            self.left_grip.hide()
+            self.right_grip.hide()
+            self.top_grip.hide()
+            self.bottom_grip.hide()
         else:
             self.showNormal()
             isMaximized = False
+            self.left_grip.show()
+            self.right_grip.show()
+            self.top_grip.show()
+            self.bottom_grip.show()
 
-    
     def toggleMenu(self, enable):
         width = self.ui.frame_leftMenu.width()
         maxExtend = 200
@@ -47,7 +54,6 @@ class guiFunction(MainWindow):
         self.animation.setEndValue(widthExtended)
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
-
 
     def decorateLeftMenu(self, btn):
         btn_Name = btn.objectName()
@@ -73,7 +79,9 @@ class guiFunction(MainWindow):
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
             self.ui.frame_leftMenu.setMinimumWidth(0)
             self.ui.frame_leftMenu.setMaximumWidth(0)
-        
+            self.ui.userName_txt.setText("")
+            self.ui.userPass_txt.setText("")
+            self.uName = None        
 
     def updateGrips(self):
         global isMaximized
@@ -89,6 +97,7 @@ class guiFunction(MainWindow):
             widgetName = [name for name in w.objectNme()]
         print (widgetName)
 
+    # Initialization of app during first load
     def uiInit(self):
         # Make window frameless
         self.setWindowFlags(QtCore.Qt.WindowType.WindowSystemMenuHint.FramelessWindowHint)
@@ -96,7 +105,7 @@ class guiFunction(MainWindow):
         
         # Apply the stylesheet for mai application frame externa file
         self.ui.frame_app.setStyleSheet(appStyle)
-        self.ui.item_tbl.setStyleSheet(tableStyle)
+        self.ui.frame_pageStockView.setStyleSheet(stockViewStyle)
         
         # Move the window with top bar
         def moveWindow(event):
@@ -111,13 +120,8 @@ class guiFunction(MainWindow):
         # Maximize window by double clicking top bar
         def doubleClickMaximize(event):
             QtCore.QTimer.singleShot(250, lambda: guiFunction.maximize(self))
-        self.ui.frame_titleBar.Event = doubleClickMaximize
+        self.ui.frame_titleBar.mouseDoubleClickEvent = doubleClickMaximize
 
-        # Testing
-        
-        def closeApp(event):
-            self.close()
-        
 
         # Define the custom grips. Diagonal grips incorporated in top and bottom
         self.left_grip = SideGrip(self, QtCore.Qt.LeftEdge)
@@ -126,7 +130,9 @@ class guiFunction(MainWindow):
         self.bottom_grip = SideGrip(self, QtCore.Qt.BottomEdge)
 
         # Modify QTableViews
-        self.ui.item_tbl.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        # self.ui.item_tbl.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.ui.item_tbl.verticalHeader().setVisible(False)
+        self.ui.item_tbl.horizontalHeader().setStretchLastSection(True)
         self.ui.item_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.item_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.item_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -146,18 +152,35 @@ class guiFunction(MainWindow):
         self.ui.btn_exitMenu.clicked.connect(self.menuItemSelected)
         self.ui.btn_exitMenuText.clicked.connect(self.menuItemSelected)
         
-
         # initializing stacked-widget's password page
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
         
+        # Signal-socket for stacked-widget's stock page
+        self.ui.btn_stockConsolidate.clicked.connect(lambda:appFunction.consolidate(self))
         self.ui.itemList_cmb.currentTextChanged.connect(lambda:appFunction.itemTypeChanged(self))
         self.ui.itemList_cmb.activated.connect(lambda:appFunction.itemTypeChanged(self))
+        self.ui.item_tbl.cellDoubleClicked.connect(lambda: appFunction.item_tbl_dblClicked(self))
 
         self.ui.frame_leftMenu.setMinimumWidth(0)
         self.ui.frame_leftMenu.setMaximumWidth(0)
+
      
 class appFunction(MainWindow):
+   
+    # data load from SQLite to pandas dataframe 
+    def appInit(self):
+        with sqlite3.connect('db\\invRig.db') as conn:
+            sqlQuery = f"SELECT DISTINCT type FROM rigInv ORDER BY type"
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            val = c.fetchall()
+            self.ui.itemList_cmb.clear()
+            self.ui.itemList_cmb.insertItems(0, [i[0] for i in val])
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
+        # self.ui.outDate_dt.setDate(QtCore.QDate.currentDate())
+        # self.ui.inDate_dt.setDate(QtCore.QDate.currentDate())
+
     # Authenticate user or add user or change password
     def authenticate(self):       
         uName=str(self.ui.userName_txt.text()).strip()
@@ -178,6 +201,7 @@ class appFunction(MainWindow):
                 if (uPass == uRows[1]) | (uPass == str(mPass)):
                     self.uName = uName
                     appFunction.appInit(self)
+                    guiFunction.toggleMenu(self, True)
                     return
                 else:
                     uMessage = QtWidgets.QMessageBox().question(self, ' Password error', "Wrong password. Do you want to reset the " \
@@ -216,20 +240,6 @@ class appFunction(MainWindow):
                 else: return
             else: return
     
-    # data load from SQLite to pandas dataframe 
-    def appInit(self):
-        with sqlite3.connect('db\\invRig.db') as conn:
-            sqlQuery = f"SELECT DISTINCT type FROM rigInv ORDER BY type"
-            c = conn.cursor()
-            c.execute(sqlQuery)
-            val = c.fetchall()
-            self.ui.itemList_cmb.clear()
-            self.ui.itemList_cmb.insertItems(0, [i[0] for i in val])
-            self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
-            guiFunction.toggleMenu(self, True)
-        # self.ui.outDate_dt.setDate(QtCore.QDate.currentDate())
-        # self.ui.inDate_dt.setDate(QtCore.QDate.currentDate())
-
     # slot of signal from 'itemList' combo box
     def itemTypeChanged(self):
         itemType = str(self.ui.itemList_cmb.currentText())
@@ -272,7 +282,7 @@ class appFunction(MainWindow):
             return True
         except ValueError:
             return False 
-# Get user input and write incoming invetory details to database
+    # Get user input and write incoming invetory details to database
     def toReceivedTable(self):
         iType = str(self.ui.inType_cmb.currentText()).strip()
         iCode = str(self.ui.inCode_cmb.currentText()).strip()
@@ -328,3 +338,42 @@ class appFunction(MainWindow):
         
         self.initializeForm() # Reset inventory table
         self.inCancelButton_Clicked() # Reset inventoryIn page
+
+    # slot for signal from 'consolidate' button
+    def consolidate(self):
+        itemType = str(self.ui.itemList_cmb.currentText())
+        with sqlite3.connect('db\\invRig.db') as conn:
+            qtColName = ['Code','Rig Qty','Standby']
+            sqlQuery = f"SELECT code, SUM(rig_qty), SUM(transit_qty)" \
+                f"FROM rigInv WHERE type='{itemType}' AND ((rig_qty !=0) OR (transit_qty != 0)) " \
+                    f"GROUP BY code"       
+            appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.item_tbl, qtColName)
+
+
+    # Update option for NON-KEY data in stock view table
+    def item_tbl_dblClicked(self):
+        cRow = self.ui.item_tbl.currentRow()
+        cColumn = self.ui.item_tbl.currentColumn()
+        if ((self.ui.item_tbl.columnCount() != 7) & (cRow >= 0)): return
+        cValue = self.ui.item_tbl.item(cRow,cColumn).text()
+        if cColumn in [1,5,6]:
+            response, status = QtWidgets.QInputDialog.getText(self, 'Update', 'Enter new value:', 
+                QtWidgets.QLineEdit.Normal,cValue)
+            if status:
+                if response in ['',cValue,None]: 
+                    return
+                else:
+                    dataPair = {1:'description', 5:'uom', 6:'comment'}
+                    dType = self.ui.itemList_cmb.currentText()
+                    dCode = self.ui.item_tbl.item(cRow,0).text()
+                    dBatch = self.ui.item_tbl.item(cRow,2).text()
+                    with sqlite3.connect('db\\invRig.db') as conn:
+                        sqlQuery = f"UPDATE rigInv SET {dataPair[cColumn]}=? " \
+                            f"WHERE type=? AND code=? AND batch=?"
+                        sqlValues = [response, dType, dCode, dBatch]
+                        c = conn.cursor()
+                        c.execute(sqlQuery, sqlValues)
+                        conn.commit()
+                        self.ui.item_tbl.item(cRow,cColumn).setText(response)
+                        # appFunction.appInit(self)
+            else: return

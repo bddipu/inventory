@@ -13,14 +13,14 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="widget_app">
    <property name="minimumSize">
     <size>
      <width>900</width>
      <height>500</height>
     </size>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="mainLayout">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -1161,88 +1161,7 @@
                            <number>0</number>
                           </property>
                           <item>
-                           <widget class="QTableWidget" name="item_tbl">
-                            <row>
-                             <property name="text">
-                              <string>Row 1</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 2</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 3</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 4</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 5</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 6</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 7</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 8</string>
-                             </property>
-                            </row>
-                            <row>
-                             <property name="text">
-                              <string>Row 9</string>
-                             </property>
-                            </row>
-                            <column>
-                             <property name="text">
-                              <string>Code</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Description</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Batch</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Rig Qty</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Standby Qty</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>UOM</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Comment</string>
-                             </property>
-                            </column>
-                           </widget>
+                           <widget class="QTableWidget" name="item_tbl"/>
                           </item>
                          </layout>
                         </widget>
@@ -1404,7 +1323,7 @@ QPushButton:pressed {
                               <number>0</number>
                              </property>
                              <item>
-                              <widget class="QPushButton" name="pushButton_4">
+                              <widget class="QPushButton" name="btn_stockConsolidate">
                                <property name="text">
                                 <string>Consolidate</string>
                                </property>

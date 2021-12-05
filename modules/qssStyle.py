@@ -111,7 +111,7 @@ appStyle ="""
 """
 
 
-tableStyle="""
+stockViewStyle="""
 	QTableWidget {	
 		background-color: transparent;
 		padding: 10px;
@@ -166,6 +166,58 @@ tableStyle="""
 	    padding-right: 3px;
 		color: #f8f8f2;
 	    font: 12pt "Segoe UI";
+	}
+
+	#frame_btnStock{
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	QComboBox{
+		background-color: #6272a4;
+		border-radius: 5px;
+		border: 2px solid #6272a4;
+		padding: 5px;
+		padding-left: 10px;
+	    color: #f8f8f2;
+	}
+	QComboBox:hover{
+		border: 2px solid #7284b9;
+	}
+	QComboBox::drop-down {
+		subcontrol-origin: padding;
+		subcontrol-position: top right;
+		width: 25px; 
+		border-left-width: 3px;
+		border-left-color: #f8f8f2;
+		border-left-style: solid;
+		border-top-right-radius: 3px;
+		border-bottom-right-radius: 3px;	
+	 }
+	/*QComboBox QAbstractItemView {
+		color: rgb(255, 255, 255);	
+		background-color: #6272a4;
+		padding: 10px;
+		selection-background-color: #6272a4;
+	}*/
+
+	/* /////////////////////////////////////////////////////////////////////////////////////////////////
+	Button */
+	QPushButton {
+		border: 2px solid #6272a4;
+		border-radius: 5px;	
+		background-color: #6272a4;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	    padding: 3px;
+	}
+	QPushButton:hover {
+		background-color: #7082b6;
+		border: 2px solid #7082b6;
+	}
+	QPushButton:pressed {	
+		background-color: #546391;
+		border: 2px solid #ff79c6;
 	}
 
 """
