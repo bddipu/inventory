@@ -127,6 +127,9 @@ class guiFunction(MainWindow):
 
         # Modify QTableViews
         self.ui.item_tbl.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.ui.item_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ui.item_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.item_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
