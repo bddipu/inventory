@@ -5,7 +5,7 @@ import datetime
 # Custom import
 from main import MainWindow
 from modules.sideGrip import SideGrip
-from modules.qssStyle import appStyle, stockViewStyle
+from modules.qssStyle import appStyle, stockViewStyle, usageStyle
 import modules.images
 
 # Glaobal variable
@@ -71,6 +71,7 @@ class guiFunction(MainWindow):
         reset_menuStyle = dormant_btnStyle + selected_btnStyle + selected_frameStyle
         self.ui.frame_LMenuMdl.setStyleSheet(reset_menuStyle)
 
+        # Show respecti
         if btn_Name == 'btn_userMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
         elif btn_Name == 'btn_stockMenu':
@@ -106,6 +107,7 @@ class guiFunction(MainWindow):
         # Apply the stylesheet for mai application frame externa file
         self.ui.frame_app.setStyleSheet(appStyle)
         self.ui.frame_pageStockView.setStyleSheet(stockViewStyle)
+        self.ui.frame_pageUsage.setStyleSheet(usageStyle)
         
         # Move the window with top bar
         def moveWindow(event):
@@ -377,3 +379,30 @@ class appFunction(MainWindow):
                         self.ui.item_tbl.item(cRow,cColumn).setText(response)
                         # appFunction.appInit(self)
             else: return
+        else:
+            appFunction.itemOutButton_Clicked(self)
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_usage)
+
+    
+
+    def itemOutButton_Clicked(self):
+        dfTable = self.ui.item_tbl
+        cRow = dfTable.currentRow()
+        if ((self.ui.item_tbl.columnCount() != 6) & (cRow >= 0)): # execure below only if data are not in consolidated form
+            for x in [dfTable]:
+                self.ui.outType_txt.setText(self.ui.itemList_cmb.currentText())
+                self.ui.outCode_txt.setText(x.item(cRow,0).text())
+                self.ui.outBatch_txt.setText(x.item(cRow,2).text())
+                self.ui.outStock_txt.setText(x.item(cRow,3).text())
+                self.ui.outStandby_txt.setText(x.item(cRow,4).text())
+                # self.ui.outUnit_txt.setText(x.item(cRow,5).text())
+                self.ui.outUserName_txt.setText(self.uName)
+
+                iCode = str(self.ui.outCode_txt.text())
+                with sqlite3.connect('db\\invRig.db') as conn: 
+                    qtColName = ['Date', 'Code', 'Batch', 'Usage','UOM', 'Purpose', 'Received By']
+                    sqlQuery = f"SELECT date, code, batch, usage, uom, "\
+                        f"purpose, usedby FROM usage WHERE code='{iCode}'"
+                    # self.fillTable_sql(conn, sqlQuery, self.ui.usage_tbl, qtColName)
+
+                # self.ui.stackedWidget.setCurrentIndex(3)

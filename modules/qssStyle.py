@@ -221,3 +221,57 @@ stockViewStyle="""
 	}
 
 """
+
+usageStyle="""
+	#frame_pageUsageDetails{
+		border: None;
+		background-color: rgba(98,114,164,255);
+	}
+	QLabel {
+		padding-right: 5px;
+		padding-left:5px;
+		color: white;
+	}
+	QLineEdit {
+		background-color: rgba(98,114,164,255);
+		padding-right: 5px;
+		padding-left:5px;
+		color: white;
+		border: None;
+		/*border-bottom: 2px solid white;*/
+	}
+	QGroupBox{
+		border: none;
+		padding-right: 10px;
+		padding-left: 10px;
+		padding-top: 30px;
+		padding-bottom: 10px;
+	}
+	#btn_toStandby {
+		border: None;
+		background-color:  None;
+	}
+	#btn_toStandby:hover {
+		background-color: rgba(0,255,0,100);
+	}
+	#btn_toStock {
+		border: None;
+		background-color:  None
+	}
+	#btn_toStock:hover {
+		background-color: rgba(0,255,0,100);
+	}
+	#btn_itemOut{
+		color: white;
+		border:  none;
+		background-color: None;
+		padding-left: 15px;
+		padding-right: 5px;
+		padding-bottom: 5px;
+	}
+
+	#btn_itemOut:hover {
+		background-color: rgba(0,255,0,100);
+	}
+
+"""
