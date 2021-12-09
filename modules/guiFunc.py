@@ -5,7 +5,7 @@ import datetime
 # Custom import
 from main import MainWindow
 from modules.sideGrip import SideGrip
-from modules.qssStyle import appStyle, stockViewStyle, usageStyle
+from modules.qssStyle import appStyle, stockViewStyle, usageStyle, receiveStyle
 import modules.images
 
 # Glaobal variable
@@ -72,8 +72,9 @@ class guiFunction(MainWindow):
         self.ui.frame_LMenuMdl.setStyleSheet(reset_menuStyle)
 
         # Show respecti
-        if btn_Name == 'btn_userMenu':
-            self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
+        if btn_Name == 'btn_receiveMenu':
+            self.ui.stackedWidget.setCurrentWidget(self.ui.pageReceive)
+            self.ui.inUserName_txt.setText(self.uName)
         elif btn_Name == 'btn_stockMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
         elif btn_Name == 'btn_exitMenu':
@@ -104,10 +105,11 @@ class guiFunction(MainWindow):
         self.setWindowFlags(QtCore.Qt.WindowType.WindowSystemMenuHint.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
         
-        # Apply the stylesheet for mai application frame externa file
+        # Apply the stylesheet for main application frame external file
         self.ui.frame_app.setStyleSheet(appStyle)
         self.ui.frame_pageStockView.setStyleSheet(stockViewStyle)
         self.ui.frame_pageUsage.setStyleSheet(usageStyle)
+        self.ui.frame_pageReceive.setStyleSheet(receiveStyle)
         
         # Move the window with top bar
         def moveWindow(event):
@@ -138,6 +140,11 @@ class guiFunction(MainWindow):
         self.ui.item_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.item_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.item_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.usage_tbl.verticalHeader().setVisible(False)
+        self.ui.usage_tbl.horizontalHeader().setStretchLastSection(True)
+        self.ui.usage_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ui.usage_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.usage_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
@@ -147,8 +154,8 @@ class guiFunction(MainWindow):
         # Signal-socket for buttons on left side menu
         self.ui.btn_toggleMenu.clicked.connect(lambda:guiFunction.toggleMenu(self, True))
         self.ui.btn_LMenuToggleText.clicked.connect(lambda:guiFunction.toggleMenu(self, True))
-        self.ui.btn_userMenu.clicked.connect(self.menuItemSelected)
-        self.ui.btn_userMenuText.clicked.connect(self.menuItemSelected)
+        self.ui.btn_receiveMenu.clicked.connect(self.menuItemSelected)
+        self.ui.btn_receiveMenuText.clicked.connect(self.menuItemSelected)
         self.ui.btn_stockMenu.clicked.connect(self.menuItemSelected)
         self.ui.btn_stockMenuText.clicked.connect(self.menuItemSelected)
         self.ui.btn_exitMenu.clicked.connect(self.menuItemSelected)
@@ -157,12 +164,24 @@ class guiFunction(MainWindow):
         # initializing stacked-widget's password page
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
+
         
         # Signal-socket for stacked-widget's stock page
         self.ui.btn_stockConsolidate.clicked.connect(lambda:appFunction.consolidate(self))
         self.ui.itemList_cmb.currentTextChanged.connect(lambda:appFunction.itemTypeChanged(self))
         self.ui.itemList_cmb.activated.connect(lambda:appFunction.itemTypeChanged(self))
         self.ui.item_tbl.cellDoubleClicked.connect(lambda: appFunction.item_tbl_dblClicked(self))
+
+        # Signal-socket for stacked-widget's usage page
+        self.ui.btn_toStock.clicked.connect(lambda:appFunction.outMoveToStock_clicked(self))
+        self.ui.btn_toStandby.clicked.connect(lambda:appFunction.outMoveToStandby_clicked(self))
+        self.ui.btn_itemOut.clicked.connect(lambda:appFunction.outDeductButton_Clicked(self))
+
+        # Signal-socket for stacked-widget's receive page
+        self.ui.inType_cmb.currentTextChanged.connect(lambda:appFunction.inTypeCombo_Change(self))
+        self.ui.inCode_cmb.currentTextChanged.connect(lambda:appFunction.inCodeCombo_Change(self))
+        self.ui.inBatch_cmb.currentTextChanged.connect(lambda:appFunction.inBatchCombo_Change(self))
+        self.ui.inBatch_cmb.activated.connect(lambda:appFunction.inBatchCombo_Change(self))
 
         self.ui.frame_leftMenu.setMinimumWidth(0)
         self.ui.frame_leftMenu.setMaximumWidth(0)
@@ -179,9 +198,13 @@ class appFunction(MainWindow):
             val = c.fetchall()
             self.ui.itemList_cmb.clear()
             self.ui.itemList_cmb.insertItems(0, [i[0] for i in val])
-            self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
-        # self.ui.outDate_dt.setDate(QtCore.QDate.currentDate())
-        # self.ui.inDate_dt.setDate(QtCore.QDate.currentDate())
+        self.ui.outDate_dt.setDate(QtCore.QDate.currentDate())
+        self.ui.inDate_dt.setDate(QtCore.QDate.currentDate())
+        
+        itemTypes = ['Bulk', 'Additive', 'Tool', 'Consumable', 'Equipment', 'Other']
+        self.ui.inType_cmb.clear()
+        self.ui.inType_cmb.insertItems(0, itemTypes)
+        
 
     # Authenticate user or add user or change password
     def authenticate(self):       
@@ -204,6 +227,7 @@ class appFunction(MainWindow):
                     self.uName = uName
                     appFunction.appInit(self)
                     guiFunction.toggleMenu(self, True)
+                    self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
                     return
                 else:
                     uMessage = QtWidgets.QMessageBox().question(self, ' Password error', "Wrong password. Do you want to reset the " \
@@ -284,6 +308,7 @@ class appFunction(MainWindow):
             return True
         except ValueError:
             return False 
+
     # Get user input and write incoming invetory details to database
     def toReceivedTable(self):
         iType = str(self.ui.inType_cmb.currentText()).strip()
@@ -395,14 +420,173 @@ class appFunction(MainWindow):
                 self.ui.outBatch_txt.setText(x.item(cRow,2).text())
                 self.ui.outStock_txt.setText(x.item(cRow,3).text())
                 self.ui.outStandby_txt.setText(x.item(cRow,4).text())
-                # self.ui.outUnit_txt.setText(x.item(cRow,5).text())
+                self.ui.outUnit_txt.setText(x.item(cRow,5).text())
+                self.ui.outUnit_txt_2.setText(x.item(cRow,5).text())
                 self.ui.outUserName_txt.setText(self.uName)
+                self.ui.outUsage_txt.setText('')
+                self.ui.outInfo_txt.setText('')
 
                 iCode = str(self.ui.outCode_txt.text())
                 with sqlite3.connect('db\\invRig.db') as conn: 
-                    qtColName = ['Date', 'Code', 'Batch', 'Usage','UOM', 'Purpose', 'Received By']
+                    qtColName = ['Date', 'Code', 'Batch', 'Usage','UOM', 'Comment', 'Used By']
                     sqlQuery = f"SELECT date, code, batch, usage, uom, "\
                         f"purpose, usedby FROM usage WHERE code='{iCode}'"
-                    # self.fillTable_sql(conn, sqlQuery, self.ui.usage_tbl, qtColName)
+                    appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.usage_tbl, qtColName)
 
                 # self.ui.stackedWidget.setCurrentIndex(3)
+
+    def outMoveToStock_clicked(self):
+        response, status = QtWidgets.QInputDialog.getText(self, 'Enter Quantity', 'Quantity to transfer:')
+        if status:
+            if appFunction.canConv(self, response):
+                mQty = float(response)
+                oStandby = float(str(self.ui.outStandby_txt.text()).strip())
+                if mQty>oStandby:
+                    QtWidgets.QMessageBox().critical(self,'Error','Transfer quantity cannot be more than current standby quantity.')
+                    return
+                else:
+                    oStock = float(str(self.ui.outStock_txt.text()).strip())
+                    oType = str(self.ui.outType_txt.text()).strip()
+                    oCode = str(self.ui.outCode_txt.text()).strip()
+                    oBatch = str(self.ui.outBatch_txt.text()).strip()
+                
+                    rStock = oStock + mQty
+                    rStandby = oStandby - mQty
+
+                    with sqlite3.connect('db\\invRig.db') as conn:
+                        sqlQuery = f"UPDATE rigInv SET rig_qty=?, transit_qty=? " \
+                            f"WHERE type=? AND code=? AND batch=?"
+                        sqlValues = [rStock, rStandby, oType, oCode, oBatch]
+                        c = conn.cursor()
+                        c.execute(sqlQuery, sqlValues)
+                        conn.commit()
+                        appFunction.appInit(self)
+                        self.ui.outStock_txt.setText(str(rStock))
+                        self.ui.outStandby_txt.setText(str(rStandby))
+            else:
+                QtWidgets.QMessageBox().critical(self,'Error','Transfer quantity must need to be a number.')
+                return
+
+
+    def outMoveToStandby_clicked(self):
+        response, status = QtWidgets.QInputDialog.getText(self, 'Enter Quantity', 'Quantity to transfer:')
+        if status:
+            if appFunction.canConv(self, response):
+                mQty = float(response)
+                oStock = float(str(self.ui.outStock_txt.text()).strip())
+                if mQty>oStock:
+                    QtWidgets.QMessageBox().critical(self,'Error','Transfer quantity cannot be more than current rig quantity.')
+                    return
+                else:
+                    oStandby = float(str(self.ui.outStandby_txt.text()).strip())
+                    oType = str(self.ui.outType_txt.text()).strip()
+                    oCode = str(self.ui.outCode_txt.text()).strip()
+                    oBatch = str(self.ui.outBatch_txt.text()).strip()
+                
+                    rStock = oStock - mQty
+                    rStandby = oStandby + mQty
+
+                    with sqlite3.connect('db\\invRig.db') as conn:
+                        sqlQuery = f"UPDATE rigInv SET rig_qty=?, transit_qty=? " \
+                            f"WHERE type=? AND code=? AND batch=?"
+                        sqlValues = [rStock, rStandby, oType, oCode, oBatch]
+                        c = conn.cursor()
+                        c.execute(sqlQuery, sqlValues)
+                        conn.commit()
+                        appFunction.appInit(self)
+                        self.ui.outStock_txt.setText(str(rStock))
+                        self.ui.outStandby_txt.setText(str(rStandby))
+            else:
+                QtWidgets.QMessageBox().critical(self,'Error','Transfer quantity must need to be a number.')
+                return
+
+
+    def outDeductButton_Clicked(self):
+        #print (self.ui.outDate_dt.date().toPyDate()) #.strftime("%d-%m-%Y")       
+        oType = str(self.ui.outType_txt.text()).strip()
+        oCode = str(self.ui.outCode_txt.text()).strip()
+        oBatch = str(self.ui.outBatch_txt.text()).strip()
+        oDate = str(self.ui.outDate_dt.date().toPython()).strip()
+        oQty = str(self.ui.outUsage_txt.text()).strip()
+        oUnit = str(self.ui.outUnit_txt.text()).strip()
+        oInfo = str(self.ui.outInfo_txt.text()).strip()
+
+        if appFunction.canConv(self, oQty):
+            usedQty =  float(oQty)
+            stockQty = float(self.ui.outStock_txt.text())
+        else:
+            QtWidgets.QMessageBox().critical(self, 'Input Error!', 'Usage quantity need to be a number.')
+            return
+
+        if (usedQty>stockQty):
+            QtWidgets.QMessageBox().critical(self, 'Input Error!', 'Usage cannot be more than the stock.')
+            return
+        elif self.ui.outInfo_txt.text()=="":
+            QtWidgets.QMessageBox().critical(self, 'Input Error!', 'Provide details about usage information')
+            return
+        else:
+            uMessage = QtWidgets.QMessageBox().question(self, ' Confirmation', \
+                f"{usedQty} {oUnit} {oCode} will be removed from inventory. Are you sure?")
+            if uMessage != QtWidgets.QMessageBox.Yes: return
+            revisedRigQty = stockQty - usedQty
+            with sqlite3.connect('db\\invRig.db') as conn:
+                sqlQuery = f"UPDATE rigInv SET rig_qty=? " \
+                    f"WHERE type=? AND code=? AND batch=?"
+                sqlValues = [revisedRigQty, oType, oCode, oBatch]
+                c = conn.cursor()
+                c.execute(sqlQuery, sqlValues)
+                conn.commit()
+                
+                sqlQuery = f"INSERT INTO usage VALUES (?,?,?,?,?,?,?,?)"
+                sqlValues = [oDate, oType, oCode, oBatch, usedQty, oUnit, oInfo, self.uName]
+                c.execute(sqlQuery,sqlValues)
+                conn.commit()
+            
+                appFunction.appInit(self) 
+                self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
+
+
+    def inTypeCombo_Change(self):
+        itemType = str(self.ui.inType_cmb.currentText()) 
+        if itemType != "":
+            with sqlite3.connect('db\\invRig.db') as conn:
+                sqlQuery = f"SELECT DISTINCT code FROM rigInv WHERE type='{itemType}'ORDER BY code"
+                c = conn.cursor()
+                c.execute(sqlQuery)
+                val = c.fetchall()
+                self.ui.inCode_cmb.clear()
+                self.ui.inCode_cmb.insertItems(0, [i[0] for i in val])
+
+                sqlQuery = f"SELECT DISTINCT uom FROM rigInv WHERE type='{itemType}'ORDER BY uom"
+                c.execute(sqlQuery)
+                val = c.fetchall()
+                self.ui.inUnit_cmb.clear()
+                self.ui.inUnit_cmb.insertItems(0, [i[0] for i in val])
+
+
+    def inCodeCombo_Change(self):
+        itemType = str(self.ui.inType_cmb.currentText())
+        itemCode = str(self.ui.inCode_cmb.currentText())
+        if ((itemType!="") | (itemCode != "")):
+                with sqlite3.connect('db\\invRig.db') as conn:
+                    sqlQuery = f"SELECT DISTINCT batch FROM rigInv "\
+                        f"WHERE type='{itemType}' AND code='{itemCode}' ORDER BY batch"
+                    c = conn.cursor()
+                    c.execute(sqlQuery)
+                    val = c.fetchall()
+                    self.ui.inBatch_cmb.clear()
+                    self.ui.inBatch_cmb.insertItems(0, [i[0] for i in val])
+
+    def inBatchCombo_Change(self):
+        iType = str(self.ui.inType_cmb.currentText())
+        iCode = str(self.ui.inCode_cmb.currentText())
+        iBatch = str(self.ui.inBatch_cmb.currentText())
+
+        if (iCode == "") | (iBatch == ""): return 
+
+        with sqlite3.connect('db\\invRig.db') as conn: 
+            qtColName = ['Date', 'Code', 'Batch','Rig Quantity','Standby Qty', 'Comment', 'Received By']
+            sqlQuery = f"SELECT date, code, batch, rig_qty, "\
+                f"transit_qty, comment, received_by FROM received "\
+                    f"WHERE type='{iType}' AND code='{iCode}'"
+            appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.received_tbl, qtColName)

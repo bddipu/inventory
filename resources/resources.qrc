@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="images">
+    <file>../images/cil-chevron-double-down.png</file>
+    <file>../images/cil-chevron-double-up.png</file>
     <file>../images/cil-check.png</file>
     <file>../images/cil-clipboard.png</file>
     <file>../images/cil-description.png</file>

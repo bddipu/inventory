@@ -53,12 +53,13 @@ appStyle ="""
 		border: None;
 		qproperty-iconSize: 24px;
 	}
-	#btn_userMenu {
+	#btn_receiveMenu {
 		border: None;
 		border-left: 3px solid transparent;
 		qproperty-iconSize: 24px;
+		qproperty-icon: url(:/images/images/cil-layers.png);
 	}
-	#btn_userMenuText {
+	#btn_receiveMenuText {
 		border: None;
 		border-left: 3px solid transparent;
 		text-align: left;
@@ -194,16 +195,7 @@ stockViewStyle="""
 		border-top-right-radius: 3px;
 		border-bottom-right-radius: 3px;	
 	 }
-	/*QComboBox QAbstractItemView {
-		color: rgb(255, 255, 255);	
-		background-color: #6272a4;
-		padding: 10px;
-		selection-background-color: #6272a4;
-	}*/
-
-	/* /////////////////////////////////////////////////////////////////////////////////////////////////
-	Button */
-	QPushButton {
+		QPushButton {
 		border: 2px solid #6272a4;
 		border-radius: 5px;	
 		background-color: #6272a4;
@@ -222,29 +214,106 @@ stockViewStyle="""
 
 """
 
+
 usageStyle="""
-	#frame_pageUsageDetails{
-		border: None;
-		background-color: rgba(98,114,164,255);
+
+	#frame_pageUsage{
+		color: white;
+		border: none;
+		background-color: rgba(212,212,212,220);
+		padding-top: 15px;
+	}
+
+	QTableWidget {	
+		background-color: rgba(255,255,255,200);
+		padding: 10px;
+		border-radius: 0px;
+		gridline-color: #9faeda;
+	    outline: none;
+	    font: 12pt "Segoe UI";
+	}
+	QTableWidget::item{
+		border-color: #9faeda;
+		padding-left: 5px;
+		padding-right: 5px;
+		gridline-color: #9faeda;
+	}
+	QTableWidget::item:selected{
+		background-color: rgb(189, 147, 249);
+	    color: #f8f8f2;
+	}
+	QHeaderView::section{
+		background-color: #6272a4;
+		/*max-width: 30px;*/
+		border: none;
+		border-style: none;
+	}
+	QTableWidget::horizontalHeader {	
+		background-color: #6272a4;
+	    font: 14pt "Segoe UI";
+	}
+	QHeaderView::section:horizontal
+	{
+	    border: 1px solid #6272a4;
+		background-color: #6272a4;
+		padding-top:5px;
+	    padding-bottom: 3px;
+		padding-left: 10px;
+	    padding-right: 10px;
+		border-top-left-radius: 0px;
+	    border-top-right-radius: 0px;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	}
+	QTableWidget::verticalHeader {	
+		background-color: #6272a4;
+	}
+	QHeaderView::section:vertical
+	{
+	    border: 1px solid #6272a4;
+		background-color: #6272a4;
+		padding-top: 3px;
+	    padding-bottom: 3px;
+		padding-left: 10px;
+	    padding-right: 3px;
+		color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	}
+	#btn_toStandby{
+		qproperty-icon: url(images/load.png);
+		qproperty-iconSize: 24px; 
+	}
+	#btn_toStock{
+		qproperty-icon: url(images/unload.png);
+		qproperty-iconSize: 24px; 
 	}
 	QLabel {
 		padding-right: 5px;
 		padding-left:5px;
-		color: white;
+		color: rgba(33,33,33,255);
+		font-weight: bold;
 	}
 	QLineEdit {
-		background-color: rgba(98,114,164,255);
+		color:  blue;
+		background-color: rgba(212,212,212,220);
 		padding-right: 5px;
 		padding-left:5px;
-		color: white;
 		border: None;
 		/*border-bottom: 2px solid white;*/
+	}
+	#outInfo_txt{
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#outUsage_txt{
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
 	}
 	QGroupBox{
 		border: none;
 		padding-right: 10px;
 		padding-left: 10px;
-		padding-top: 30px;
+		padding-top: 10px;
 		padding-bottom: 10px;
 	}
 	#btn_toStandby {
@@ -261,17 +330,154 @@ usageStyle="""
 	#btn_toStock:hover {
 		background-color: rgba(0,255,0,100);
 	}
-	#btn_itemOut{
-		color: white;
-		border:  none;
-		background-color: None;
-		padding-left: 15px;
-		padding-right: 5px;
-		padding-bottom: 5px;
+	#btn_itemOut {
+		border: 2px solid #6272a4;
+		border-radius: 5px;	
+		background-color: #6272a4;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	    padding: 3px;
 	}
-
 	#btn_itemOut:hover {
-		background-color: rgba(0,255,0,100);
+		background-color: #7082b6;
+		border: 2px solid #7082b6;
+	}
+	#btn_itemOut:pressed {	
+		background-color: #546391;
+		border: 2px solid #ff79c6;
+	}
+	#outDate_dt {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#outDate_dt::drop-down {
+		/*background-color: #6272a4;
+		/*subcontrol-origin: padding;
+		subcontrol-position: top right;*/
+		width: 24px;
 	}
 
+"""
+
+receiveStyle="""
+	QComboBox {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	QGroupBox{
+		border: none;
+		padding-right: 10px;
+		padding-left: 10px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	QLineEdit {
+		color:  blue;
+		padding-right: 5px;
+		padding-left:5px;
+		border: None;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+		/*border-bottom: 2px solid white;*/
+	}
+	QLabel {
+		padding-right: 5px;
+		padding-left:5px;
+		color: rgba(33,33,33,255);
+		font-weight: bold;
+	}
+	QTableWidget {	
+		background-color: rgba(255,255,255,200);
+		padding: 10px;
+		border-radius: 0px;
+		gridline-color: #9faeda;
+	    outline: none;
+	    font: 12pt "Segoe UI";
+	}
+	QTableWidget::item{
+		border-color: #9faeda;
+		padding-left: 5px;
+		padding-right: 5px;
+		gridline-color: #9faeda;
+	}
+	QTableWidget::item:selected{
+		background-color: rgb(189, 147, 249);
+	    color: #f8f8f2;
+	}
+	QHeaderView::section{
+		background-color: #6272a4;
+		/*max-width: 30px;*/
+		border: none;
+		border-style: none;
+	}
+	QTableWidget::horizontalHeader {	
+		background-color: #6272a4;
+	    font: 14pt "Segoe UI";
+	}
+	QHeaderView::section:horizontal
+	{
+	    border: 1px solid #6272a4;
+		background-color: #6272a4;
+		padding-top:5px;
+	    padding-bottom: 3px;
+		padding-left: 10px;
+	    padding-right: 10px;
+		border-top-left-radius: 0px;
+	    border-top-right-radius: 0px;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	}
+	QTableWidget::verticalHeader {	
+		background-color: #6272a4;
+	}
+	QHeaderView::section:vertical
+	{
+	    border: 1px solid #6272a4;
+		background-color: #6272a4;
+		padding-top: 3px;
+	    padding-bottom: 3px;
+		padding-left: 10px;
+	    padding-right: 3px;
+		color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	}
+	
+	#frame_pageReceive{
+		color: white;
+		border: none;
+		background-color: rgba(212,212,212,220);
+		padding-top: 5px;
+	}
+	#inUserName_txt{
+		color:  blue;
+		background-color: rgba(212,212,212,220);
+		padding-right: 5px;
+		padding-left:5px;
+		border: None;
+	}
+	#inDate_dt {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#btn_itemIn {
+		border: 2px solid #6272a4;
+		border-radius: 5px;	
+		background-color: #6272a4;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	    padding: 3px;
+	}
+	#btn_itemIn:hover {
+		background-color: #7082b6;
+		border: 2px solid #7082b6;
+	}
+	#btn_itemIn:pressed {	
+		background-color: #546391;
+		border: 2px solid #ff79c6;
+	}
+
+	
 """
