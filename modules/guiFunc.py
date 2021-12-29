@@ -77,6 +77,9 @@ class guiFunction(MainWindow):
             self.ui.inUserName_txt.setText(self.uName)
         elif btn_Name == 'btn_stockMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
+        elif btn_Name == 'btn_reviewMenu':
+            pass
+            #self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
         elif btn_Name == 'btn_exitMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
             self.ui.frame_leftMenu.setMinimumWidth(0)
@@ -156,6 +159,8 @@ class guiFunction(MainWindow):
         self.ui.btn_LMenuToggleText.clicked.connect(lambda:guiFunction.toggleMenu(self, True))
         self.ui.btn_receiveMenu.clicked.connect(self.menuItemSelected)
         self.ui.btn_receiveMenuText.clicked.connect(self.menuItemSelected)
+        self.ui.btn_reviewMenu.clicked.connect(self.menuItemSelected)
+        self.ui.btn_reviewMenuText.clicked.connect(self.menuItemSelected)
         self.ui.btn_stockMenu.clicked.connect(self.menuItemSelected)
         self.ui.btn_stockMenuText.clicked.connect(self.menuItemSelected)
         self.ui.btn_exitMenu.clicked.connect(self.menuItemSelected)
@@ -164,6 +169,7 @@ class guiFunction(MainWindow):
         # initializing stacked-widget's password page
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
+        self.ui.userPass_txt.returnPressed.connect(lambda:appFunction.authenticate(self))
 
         
         # Signal-socket for stacked-widget's stock page
@@ -590,3 +596,16 @@ class appFunction(MainWindow):
                 f"transit_qty, comment, received_by FROM received "\
                     f"WHERE type='{iType}' AND code='{iCode}'"
             appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.received_tbl, qtColName)
+
+    # Match comma seperated word-list in a SQLite text-data column and return all matched rows 
+    def keyword_match(keyWord, dbData, cData):
+        matchedList =[]
+        keyWord = list(set((val.lower()).strip() for val in keyWord.split(',')))
+        
+        for sIndex,sValue in enumerate(cData):
+            for j in (sValue.lower()).split(' '):
+                for b in keyWord:
+                    if (b.lower()).strip() == (j.lower()).strip(): 
+                        matchedList.append(dbData[sIndex])
+        
+        return matchedList

@@ -66,6 +66,19 @@ appStyle ="""
 		padding-left: 12px;
 		color: rgba(255,255,255,255);
 	}
+	#btn_reviewMenu {
+		border: None;
+		border-left: 3px solid transparent;
+		qproperty-iconSize: 24px;
+		qproperty-icon: url(images/cil-find.png);
+	}
+	#btn_reviewMenuText {
+		border: None;
+		border-left: 3px solid transparent;
+		text-align: left;
+		padding-left: 12px;
+		color: rgba(255,255,255,255);
+	}
 	#btn_stockMenu {
 		border: None;
 		border-left: 3px solid transparent;
