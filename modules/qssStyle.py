@@ -187,18 +187,19 @@ stockViewStyle="""
 		padding-right: 10px;
 	}
 
-	QComboBox{
-		background-color: #6272a4;
-		border-radius: 5px;
-		border: 2px solid #6272a4;
+	/*QComboBox{
+		/*background-color: #6272a4;*/
+		/*border-radius: 5px;
+		border: 2px;
 		padding: 5px;
 		padding-left: 10px;
+		color: white;
 	    color: #f8f8f2;
-	}
-	QComboBox:hover{
-		border: 2px solid #7284b9;
-	}
-	QComboBox::drop-down {
+	}*/
+	/*QComboBox:hover{
+		border: 2px;
+	}*/
+	/*QComboBox::drop-down {
 		subcontrol-origin: padding;
 		subcontrol-position: top right;
 		width: 25px; 
@@ -207,14 +208,16 @@ stockViewStyle="""
 		border-left-style: solid;
 		border-top-right-radius: 3px;
 		border-bottom-right-radius: 3px;	
-	 }
+	 }*/
 		QPushButton {
 		border: 2px solid #6272a4;
 		border-radius: 5px;	
 		background-color: #6272a4;
 	    color: #f8f8f2;
 	    font: 12pt "Segoe UI";
-	    padding: 3px;
+	    padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 5px;
 	}
 	QPushButton:hover {
 		background-color: #7082b6;

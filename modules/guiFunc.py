@@ -78,7 +78,8 @@ class guiFunction(MainWindow):
         elif btn_Name == 'btn_stockMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
         elif btn_Name == 'btn_reviewMenu':
-            self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
+            pass
+            #self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
         elif btn_Name == 'btn_exitMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
             self.ui.frame_leftMenu.setMinimumWidth(0)
@@ -147,6 +148,11 @@ class guiFunction(MainWindow):
         self.ui.usage_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.usage_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.usage_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.received_tbl.verticalHeader().setVisible(False)
+        self.ui.received_tbl.horizontalHeader().setStretchLastSection(True)
+        self.ui.received_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ui.received_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.received_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
@@ -169,6 +175,7 @@ class guiFunction(MainWindow):
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
         self.ui.userPass_txt.returnPressed.connect(lambda:appFunction.authenticate(self))
+        self.ui.appExit_btn.clicked.connect(lambda:appFunction.appClose(self))
 
         
         # Signal-socket for stacked-widget's stock page
@@ -187,6 +194,7 @@ class guiFunction(MainWindow):
         self.ui.inCode_cmb.currentTextChanged.connect(lambda:appFunction.inCodeCombo_Change(self))
         self.ui.inBatch_cmb.currentTextChanged.connect(lambda:appFunction.inBatchCombo_Change(self))
         self.ui.inBatch_cmb.activated.connect(lambda:appFunction.inBatchCombo_Change(self))
+        self.ui.btn_itemIn.clicked.connect(lambda:appFunction.toReceivedTable(self))
 
         self.ui.frame_leftMenu.setMinimumWidth(0)
         self.ui.frame_leftMenu.setMaximumWidth(0)
@@ -194,6 +202,9 @@ class guiFunction(MainWindow):
      
 class appFunction(MainWindow):
    
+    def appClose(self):
+        self.close()
+
     # data load from SQLite to pandas dataframe 
     def appInit(self):
         with sqlite3.connect('db\\invRig.db') as conn:
@@ -321,7 +332,7 @@ class appFunction(MainWindow):
         iBatch = str(self.ui.inBatch_cmb.currentText()).strip()
         iDesc = str(self.ui.inDescription_txt.text()).strip()
         iComm = str(self.ui.inComment_txt.text()).strip()
-        iDate = str(self.ui.inDate_dt.date().toPyDate()).strip()
+        iDate = str(self.ui.inDate_dt.date().toPython()).strip()
         iUnit = str(self.ui.inUnit_cmb.currentText()).strip()
         iQty = str(self.ui.inQty_txt.text()).strip()
         iStandby = str(self.ui.inTransitQty_txt.text()).strip()
@@ -332,7 +343,7 @@ class appFunction(MainWindow):
         if len(list(set(iValue).intersection(set(checkValue)))):
             QtWidgets.QMessageBox().critical(self, 'Input Error', 'All fields are mandatory and cannot be left empty.')
             return
-        if not (self.canConv(iQty) & self.canConv(iStandby)):
+        if not (appFunction.canConv(self, iQty) & appFunction.canConv(self, iStandby)):
             QtWidgets.QMessageBox().critical(self, 'Input Error', 'Quantities must need to be number.')
             return
         
@@ -366,10 +377,24 @@ class appFunction(MainWindow):
             sqlQuery = f"INSERT INTO received VALUES (?,?,?,?,?,?,?,?,?,?)"
             sqlValues = [iDate, iType, iCode, iBatch, iDesc, iComm, iUnit, iQty, iStandby, self.uName]
             c.execute(sqlQuery,sqlValues)
-            conn.commit()
-        
-        self.initializeForm() # Reset inventory table
-        self.inCancelButton_Clicked() # Reset inventoryIn page
+            try:
+                conn.commit()
+            
+                QtWidgets.QMessageBox().information(self,'Success','Entry added to inventory.')
+                #appFunction.appInit(self) # Reset inventory table
+                appFunction.itemTypeChanged(self)
+                self.ui.inCode_cmb.clear()
+                self.ui.inBatch_cmb.clear()
+                self.ui.inDescription_txt.setText('')
+                self.ui.inComment_txt.setText('')
+                self.ui.inUnit_cmb.clear()
+                self.ui.inQty_txt.setText('')
+                self.ui.inTransitQty_txt.setText('')
+                self.ui.received_tbl.setRowCount(0)
+                self.ui.received_tbl.setColumnCount(0)
+            except:
+                QtWidgets.QMessageBox().critical(self,'Error','An error occured while attempting to add record.')
+
 
     # slot for signal from 'consolidate' button
     def consolidate(self):
@@ -595,3 +620,16 @@ class appFunction(MainWindow):
                 f"transit_qty, comment, received_by FROM received "\
                     f"WHERE type='{iType}' AND code='{iCode}'"
             appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.received_tbl, qtColName)
+
+    # Match comma seperated word-list in a SQLite text-data column and return all matched rows 
+    def keyword_match(keyWord, dbData, cData):
+        matchedList =[]
+        keyWord = list(set((val.lower()).strip() for val in keyWord.split(',')))
+        
+        for sIndex,sValue in enumerate(cData):
+            for j in (sValue.lower()).split(' '):
+                for b in keyWord:
+                    if (b.lower()).strip() == (j.lower()).strip(): 
+                        matchedList.append(dbData[sIndex])
+        
+        return matchedList

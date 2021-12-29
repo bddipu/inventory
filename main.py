@@ -6,6 +6,7 @@ from modules.guiFunc import *
 
 qtObjName, qtObjClass = loadUiType('ui\\app.ui')
 
+
 class MainWindow(qtObjClass):
 
     def __init__(self):
