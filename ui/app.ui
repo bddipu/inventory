@@ -1395,9 +1395,46 @@
                               <number>0</number>
                              </property>
                              <item>
-                              <widget class="QComboBox" name="itemList_cmb"/>
+                              <widget class="QComboBox" name="itemList_cmb">
+                               <property name="font">
+                                <font>
+                                 <pointsize>11</pointsize>
+                                </font>
+                               </property>
+                               <property name="editable">
+                                <bool>false</bool>
+                               </property>
+                              </widget>
                              </item>
                             </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_12">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                             <enum>QSizePolicy::Fixed</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QComboBox" name="itemCode_cmb">
+                            <property name="font">
+                             <font>
+                              <pointsize>11</pointsize>
+                             </font>
+                            </property>
+                            <property name="editable">
+                             <bool>false</bool>
+                            </property>
                            </widget>
                           </item>
                           <item alignment="Qt::AlignRight">
@@ -1428,6 +1465,13 @@
                               <widget class="QPushButton" name="btn_stockConsolidate">
                                <property name="text">
                                 <string>Consolidate</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="btn_stockExpand">
+                               <property name="text">
+                                <string>View All</string>
                                </property>
                               </widget>
                              </item>
@@ -5116,7 +5160,7 @@ frame_PasswordBtn {
                            </widget>
                           </item>
                           <item>
-                           <widget class="QPushButton" name="pushButton_5">
+                           <widget class="QPushButton" name="appExit_btn">
                             <property name="cursor">
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>

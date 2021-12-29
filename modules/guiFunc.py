@@ -148,6 +148,11 @@ class guiFunction(MainWindow):
         self.ui.usage_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.usage_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.usage_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.received_tbl.verticalHeader().setVisible(False)
+        self.ui.received_tbl.horizontalHeader().setStretchLastSection(True)
+        self.ui.received_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ui.received_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.received_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
@@ -170,13 +175,16 @@ class guiFunction(MainWindow):
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
         self.ui.userPass_txt.returnPressed.connect(lambda:appFunction.authenticate(self))
-
+        self.ui.appExit_btn.clicked.connect(lambda:self.close())
         
         # Signal-socket for stacked-widget's stock page
         self.ui.btn_stockConsolidate.clicked.connect(lambda:appFunction.consolidate(self))
         self.ui.itemList_cmb.currentTextChanged.connect(lambda:appFunction.itemTypeChanged(self))
         self.ui.itemList_cmb.activated.connect(lambda:appFunction.itemTypeChanged(self))
         self.ui.item_tbl.cellDoubleClicked.connect(lambda: appFunction.item_tbl_dblClicked(self))
+        self.ui.btn_stockExpand.clicked.connect(lambda:appFunction.viewAllClicked(self))
+        self.ui.itemCode_cmb.currentTextChanged.connect(lambda:appFunction.itemCodeChanged(self))
+        
 
         # Signal-socket for stacked-widget's usage page
         self.ui.btn_toStock.clicked.connect(lambda:appFunction.outMoveToStock_clicked(self))
@@ -188,6 +196,8 @@ class guiFunction(MainWindow):
         self.ui.inCode_cmb.currentTextChanged.connect(lambda:appFunction.inCodeCombo_Change(self))
         self.ui.inBatch_cmb.currentTextChanged.connect(lambda:appFunction.inBatchCombo_Change(self))
         self.ui.inBatch_cmb.activated.connect(lambda:appFunction.inBatchCombo_Change(self))
+        self.ui.btn_itemIn.clicked.connect(lambda:appFunction.toReceivedTable(self))
+
 
         self.ui.frame_leftMenu.setMinimumWidth(0)
         self.ui.frame_leftMenu.setMaximumWidth(0)
@@ -272,14 +282,36 @@ class appFunction(MainWindow):
                 else: return
             else: return
     
-    # slot of signal from 'itemList' combo box
-    def itemTypeChanged(self):
+    
+    def viewAllClicked(self):
         itemType = str(self.ui.itemList_cmb.currentText())
         with sqlite3.connect('db\\invRig.db') as conn:
             qtColName = ['Code','Description','Batch','Rig Quantity','Standby Qty','UOM', 'Comment']
             sqlQuery = f"SELECT code, description, batch, rig_qty, transit_qty, uom, comment " \
                 f"FROM rigInv WHERE type='{itemType}' AND ((rig_qty !=0) OR (transit_qty != 0)) ORDER BY code"
             appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.item_tbl, qtColName)
+
+    # slot of signal from 'itemList' combo box
+    def itemTypeChanged(self):
+        appFunction.viewAllClicked(self)
+        itemType = str(self.ui.itemList_cmb.currentText())
+        with sqlite3.connect('db\\invRig.db') as conn:
+            sqlQuery = f"SELECT DISTINCT code FROM rigInv WHERE type='{itemType}'ORDER BY code"
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            val = c.fetchall()
+            self.ui.itemCode_cmb.clear()
+            self.ui.itemCode_cmb.insertItems(0, [i[0] for i in val])
+
+    def itemCodeChanged(self):
+        itemType = str(self.ui.itemList_cmb.currentText())
+        itemCode = str(self.ui.itemCode_cmb.currentText())
+        with sqlite3.connect('db\\invRig.db') as conn:
+            qtColName = ['Code','Description','Batch','Rig Quantity','Standby Qty','UOM', 'Comment']
+            sqlQuery = f"SELECT code, description, batch, rig_qty, transit_qty, uom, comment " \
+                f"FROM rigInv WHERE type='{itemType}' AND code='{itemCode}' AND ((rig_qty !=0) OR (transit_qty != 0)) ORDER BY code"
+            appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.item_tbl, qtColName)
+
 
     def fillTable_sql(self, sqlConn, sqlQuery, qtTable, qtColName):
         c = sqlConn.cursor()
@@ -322,7 +354,7 @@ class appFunction(MainWindow):
         iBatch = str(self.ui.inBatch_cmb.currentText()).strip()
         iDesc = str(self.ui.inDescription_txt.text()).strip()
         iComm = str(self.ui.inComment_txt.text()).strip()
-        iDate = str(self.ui.inDate_dt.date().toPyDate()).strip()
+        iDate = str(self.ui.inDate_dt.date().toPython()).strip()
         iUnit = str(self.ui.inUnit_cmb.currentText()).strip()
         iQty = str(self.ui.inQty_txt.text()).strip()
         iStandby = str(self.ui.inTransitQty_txt.text()).strip()
@@ -333,7 +365,7 @@ class appFunction(MainWindow):
         if len(list(set(iValue).intersection(set(checkValue)))):
             QtWidgets.QMessageBox().critical(self, 'Input Error', 'All fields are mandatory and cannot be left empty.')
             return
-        if not (self.canConv(iQty) & self.canConv(iStandby)):
+        if not (appFunction.canConv(self, iQty) & appFunction.canConv(self, iStandby)):
             QtWidgets.QMessageBox().critical(self, 'Input Error', 'Quantities must need to be number.')
             return
         
@@ -362,15 +394,28 @@ class appFunction(MainWindow):
                 sqlValues = [iType, iCode, iDesc, iBatch, iQty, iStandby, iUnit, iComm]          
             
             c.execute(sqlQuery,sqlValues)
-            conn.commit()
             
-            sqlQuery = f"INSERT INTO received VALUES (?,?,?,?,?,?,?,?,?,?)"
-            sqlValues = [iDate, iType, iCode, iBatch, iDesc, iComm, iUnit, iQty, iStandby, self.uName]
-            c.execute(sqlQuery,sqlValues)
-            conn.commit()
-        
-        self.initializeForm() # Reset inventory table
-        self.inCancelButton_Clicked() # Reset inventoryIn page
+            try:
+                conn.commit()
+                
+                sqlQuery = f"INSERT INTO received VALUES (?,?,?,?,?,?,?,?,?,?)"
+                sqlValues = [iDate, iType, iCode, iBatch, iDesc, iComm, iUnit, iQty, iStandby, self.uName]
+                c.execute(sqlQuery,sqlValues)
+                conn.commit()
+                QtWidgets.QMessageBox().information(self,'Success','Item added successfully to database.')
+                self.ui.inCode_cmb.clear()
+                self.ui.inBatch_cmb.clear()
+                self.ui.inDescription_txt.setText('')
+                self.ui.inComment_txt.setText('')
+                self.ui.inUnit_cmb.clear()
+                self.ui.inQty_txt.setText('')
+                self.ui.inTransitQty_txt.setText('')
+                self.ui.received_tbl.setRowCount(0)
+                self.ui.received_tbl.setColumnCount(0)
+                appFunction.itemTypeChanged(self)
+            except:
+                QtWidgets.QMessageBox().critical(self,'Error','An error occured while adding the item to database')
+                   
 
     # slot for signal from 'consolidate' button
     def consolidate(self):
