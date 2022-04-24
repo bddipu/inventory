@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+from PyInstaller.utils.hooks import collect_submodules
 
 block_cipher = None
 
@@ -9,7 +9,7 @@ a = Analysis(['main.py'],
              pathex=[],
              binaries=[],
              datas=added_files,
-             hiddenimports=[],
+             hiddenimports=['guiFunc','images','main','qssStyle','sideGrip'],
              hookspath=[],
              hooksconfig={},
              runtime_hooks=[],

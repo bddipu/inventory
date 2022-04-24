@@ -1,12 +1,14 @@
 from PySide6 import QtWidgets, QtCore, QtGui
+from openpyxl import load_workbook
+from datetime import date
 import sqlite3
 import datetime
 
 # Custom import
 from main import MainWindow
-from modules.sideGrip import SideGrip
-from modules.qssStyle import appStyle, stockViewStyle, usageStyle, receiveStyle
-import modules.images
+from sideGrip import SideGrip
+from qssStyle import appStyle, stockViewStyle, usageStyle, receiveStyle, reviewStyle
+import images
 
 # Glaobal variable
 isMaximized = False
@@ -43,7 +45,7 @@ class guiFunction(MainWindow):
         maxExtend = 200
         standard = 50
 
-        if width == 50:
+        if width == 50 or width == 0:
             widthExtended = maxExtend
         else:
             widthExtended = standard
@@ -66,8 +68,14 @@ class guiFunction(MainWindow):
                 border-left: 3px solid transparent;
             }
         """
-        selected_btnStyle = ' #' + btn_Name + '{border-left: 3px solid red;}'
-        selected_frameStyle = ' #' + frame_Name + '{background-color: rgba(0,255,0,100);}'
+        
+        if btn_Name == 'btn_exitMenu':
+            selected_btnStyle = ' #' + 'btn_stockMenu' + '{border-left: 3px solid red;}'
+            selected_frameStyle = ' #' + 'frame_stockMenu' + '{background-color: rgba(0,255,0,100);}'
+        else:
+            selected_btnStyle = ' #' + btn_Name + '{border-left: 3px solid red;}'
+            selected_frameStyle = ' #' + frame_Name + '{background-color: rgba(0,255,0,100);}'
+        
         reset_menuStyle = dormant_btnStyle + selected_btnStyle + selected_frameStyle
         self.ui.frame_LMenuMdl.setStyleSheet(reset_menuStyle)
 
@@ -78,15 +86,15 @@ class guiFunction(MainWindow):
         elif btn_Name == 'btn_stockMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
         elif btn_Name == 'btn_reviewMenu':
-            pass
-            #self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
+            self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
         elif btn_Name == 'btn_exitMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
             self.ui.frame_leftMenu.setMinimumWidth(0)
             self.ui.frame_leftMenu.setMaximumWidth(0)
             self.ui.userName_txt.setText("")
             self.ui.userPass_txt.setText("")
-            self.uName = None        
+            self.uName = None
+            self.ui.userName_txt.setFocus()        
 
     def updateGrips(self):
         global isMaximized
@@ -113,6 +121,7 @@ class guiFunction(MainWindow):
         self.ui.frame_pageStockView.setStyleSheet(stockViewStyle)
         self.ui.frame_pageUsage.setStyleSheet(usageStyle)
         self.ui.frame_pageReceive.setStyleSheet(receiveStyle)
+        self.ui.frame_pageReview.setStyleSheet(reviewStyle)
         
         # Move the window with top bar
         def moveWindow(event):
@@ -153,6 +162,11 @@ class guiFunction(MainWindow):
         self.ui.received_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.received_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.received_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.review_tbl.verticalHeader().setVisible(False)
+        self.ui.review_tbl.horizontalHeader().setStretchLastSection(True)
+        self.ui.review_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ui.review_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.review_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
@@ -184,6 +198,7 @@ class guiFunction(MainWindow):
         self.ui.item_tbl.cellDoubleClicked.connect(lambda: appFunction.item_tbl_dblClicked(self))
         self.ui.btn_stockExpand.clicked.connect(lambda:appFunction.viewAllClicked(self))
         self.ui.itemCode_cmb.currentTextChanged.connect(lambda:appFunction.itemCodeChanged(self))
+        self.ui.btn_stock_report.clicked.connect(lambda:appFunction.inventory_report(self))
         
 
         # Signal-socket for stacked-widget's usage page
@@ -198,6 +213,12 @@ class guiFunction(MainWindow):
         self.ui.inBatch_cmb.activated.connect(lambda:appFunction.inBatchCombo_Change(self))
         self.ui.btn_itemIn.clicked.connect(lambda:appFunction.toReceivedTable(self))
 
+        # Signal-socket for stacked-widget's review page
+        self.ui.review_db_cmb.currentTextChanged.connect(lambda:appFunction.review_db_cmb_change(self))
+        self.ui.review_db_cmb.activated.connect(lambda:appFunction.review_db_cmb_change(self))
+        self.ui.review_type_cmb.currentTextChanged.connect(lambda:appFunction.review_type_cmb_change(self))
+        self.ui.review_search_btn.clicked.connect(lambda:appFunction.review_search_btn_Clicked(self))
+        self.ui.review_report_btn.clicked.connect(lambda:appFunction.review_report(self))
 
         self.ui.frame_leftMenu.setMinimumWidth(0)
         self.ui.frame_leftMenu.setMaximumWidth(0)
@@ -205,7 +226,7 @@ class guiFunction(MainWindow):
      
 class appFunction(MainWindow):
    
-    # data load from SQLite to pandas dataframe 
+    # data load from SQLite 
     def appInit(self):
         with sqlite3.connect('db\\invRig.db') as conn:
             sqlQuery = f"SELECT DISTINCT type FROM rigInv ORDER BY type"
@@ -216,10 +237,18 @@ class appFunction(MainWindow):
             self.ui.itemList_cmb.insertItems(0, [i[0] for i in val])
         self.ui.outDate_dt.setDate(QtCore.QDate.currentDate())
         self.ui.inDate_dt.setDate(QtCore.QDate.currentDate())
-        
+        self.ui.reviewStart_dt.setDate(QtCore.QDate.currentDate())
+        self.ui.reviewEnd_dt.setDate(QtCore.QDate.currentDate())
+
         itemTypes = ['Bulk', 'Additive', 'Tool', 'Consumable', 'Equipment', 'Other']
         self.ui.inType_cmb.clear()
         self.ui.inType_cmb.insertItems(0, itemTypes)
+
+        selected_btnStyle = ' #' + 'btn_stockMenu' + '{border-left: 3px solid red;}'
+        selected_frameStyle = ' #' + 'frame_stockMenu' + '{background-color: rgba(0,255,0,100);}'
+        reset_menuStyle = "QPushButton{border-left: 3px solid transparent;}"\
+                + selected_btnStyle + selected_frameStyle
+        self.ui.frame_LMenuMdl.setStyleSheet(reset_menuStyle)
         
 
     # Authenticate user or add user or change password
@@ -506,7 +535,7 @@ class appFunction(MainWindow):
 
                     with sqlite3.connect('db\\invRig.db') as conn:
                         sqlQuery = f"UPDATE rigInv SET rig_qty=?, transit_qty=? " \
-                            f"WHERE type=? AND code=? AND batch=?"
+                            f"WHERE type=? AND code=? AND batch=? AND ((rig_qty !=0) OR (transit_qty != 0))"
                         sqlValues = [rStock, rStandby, oType, oCode, oBatch]
                         c = conn.cursor()
                         c.execute(sqlQuery, sqlValues)
@@ -539,7 +568,7 @@ class appFunction(MainWindow):
 
                     with sqlite3.connect('db\\invRig.db') as conn:
                         sqlQuery = f"UPDATE rigInv SET rig_qty=?, transit_qty=? " \
-                            f"WHERE type=? AND code=? AND batch=?"
+                            f"WHERE type=? AND code=? AND batch=? AND ((rig_qty !=0) OR (transit_qty != 0))"
                         sqlValues = [rStock, rStandby, oType, oCode, oBatch]
                         c = conn.cursor()
                         c.execute(sqlQuery, sqlValues)
@@ -582,7 +611,7 @@ class appFunction(MainWindow):
             revisedRigQty = stockQty - usedQty
             with sqlite3.connect('db\\invRig.db') as conn:
                 sqlQuery = f"UPDATE rigInv SET rig_qty=? " \
-                    f"WHERE type=? AND code=? AND batch=?"
+                    f"WHERE type=? AND code=? AND batch=? AND (rig_qty != 0)"
                 sqlValues = [revisedRigQty, oType, oCode, oBatch]
                 c = conn.cursor()
                 c.execute(sqlQuery, sqlValues)
@@ -642,6 +671,105 @@ class appFunction(MainWindow):
                     f"WHERE type='{iType}' AND code='{iCode}'"
             appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.received_tbl, qtColName)
 
+    def review_db_cmb_change(self):
+        review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
+        with sqlite3.connect('db\\invRig.db') as conn:
+            sqlQuery = f"SELECT DISTINCT type FROM {review_tbl} ORDER BY type"
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            val = c.fetchall()
+            self.ui.review_type_cmb.clear()
+            self.ui.review_type_cmb.insertItems(0,['ALL'])
+            self.ui.review_type_cmb.insertItems(0, [i[0] for i in val])
+
+    def review_type_cmb_change(self):
+        review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
+        review_type = str(self.ui.review_type_cmb.currentText())
+        
+        if (review_type == "") : return
+
+        with sqlite3.connect('db\\invRig.db') as conn:
+            sqlQuery = f"SELECT DISTINCT code FROM {review_tbl} "\
+                            f"WHERE type='{review_type}' ORDER BY code"
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            val = c.fetchall()
+            self.ui.review_code_cmb.clear()
+            self.ui.review_code_cmb.insertItems(0,['ALL'])
+            self.ui.review_code_cmb.insertItems(0, [i[0] for i in val])
+        
+    def review_search_btn_Clicked(self):
+        review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
+        review_type = str(self.ui.review_type_cmb.currentText())
+        review_code = str(self.ui.review_code_cmb.currentText())
+        review_from = str(self.ui.reviewStart_dt.date().toPython()).strip()
+        review_to = str(self.ui.reviewEnd_dt.date().toPython()).strip()
+        review_keyword = str(self.ui.review_keyword_txt.text()).strip()
+        
+        if review_tbl == 'usage':
+            qtColName = ['Date','Type','Code','Batch','Usage Qty','UOM','Comment','Used By']
+            if review_type == 'ALL':
+                sqlQuery = f"SELECT date, type, code, batch, usage, uom, purpose, usedby " \
+                    f"FROM usage WHERE date BETWEEN '{review_from}' AND '{review_to}'"
+            else:
+                if review_code == 'ALL':
+                    sqlQuery = f"SELECT date, type, code, batch, usage, uom, purpose, usedby " \
+                        f"FROM usage WHERE type='{review_type}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+                else:
+                    sqlQuery = f"SELECT date, type, code, batch, usage, uom, purpose, usedby " \
+                        f"FROM usage WHERE type='{review_type}' AND code='{review_code}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+ 
+        if review_tbl == 'received':
+            qtColName = ['Date','Type','Code','Batch','Received Qty','UOM','Comment','Received By']
+            if review_type == 'ALL':
+                sqlQuery = f"SELECT date, type, code, batch, (rig_qty + transit_qty) as qty, unit, comment, received_by " \
+                    f"FROM received WHERE date BETWEEN '{review_from}' AND '{review_to}'"
+            else:
+                if review_code == 'ALL':
+                    sqlQuery = f"SELECT date, type, code, batch, (rig_qty + transit_qty) as qty, unit, comment, received_by " \
+                        f"FROM received WHERE type='{review_type}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+                else:
+                    sqlQuery = f"SELECT date, type, code, batch, (rig_qty + transit_qty) as qty, unit, comment, received_by " \
+                        f"FROM received WHERE type='{review_type}' AND code='{review_code}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+
+        with sqlite3.connect('db\\invRig.db') as conn:           
+            # appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.review_tbl, qtColName)
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            dbData = c.fetchall()
+            cData = [a[6] for a in dbData] 
+            if len(review_keyword):
+                allData = appFunction.keyword_match(review_keyword,dbData,cData)
+            else:
+                allData = dbData
+
+            # Counts no of rows, columns n dataset
+            if allData: 
+                noOfColumns = len(list(allData[0]))
+            else:
+                self.ui.review_tbl.clear()
+                self.ui.review_tbl.setColumnCount(0)
+                self.ui.review_tbl.setRowCount(0)
+                return   
+            noOfRows = len(allData)
+
+            for x in [self.ui.review_tbl]:
+                x.clear()
+                x.setColumnCount(noOfColumns)
+                x.setRowCount(noOfRows)
+                x.setHorizontalHeaderLabels(qtColName)
+                x.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignLeft)
+                for i in range(noOfRows):
+                    for j in range(noOfColumns):
+                        x.setItem(i,j,QtWidgets.QTableWidgetItem(str(allData[i][j])))
+                x.resizeColumnsToContents()
+                x.verticalHeader().setDefaultSectionSize(x.rowHeight(15))
+
+
     # Match comma seperated word-list in a SQLite text-data column and return all matched rows 
     def keyword_match(keyWord, dbData, cData):
         matchedList =[]
@@ -654,3 +782,119 @@ class appFunction(MainWindow):
                         matchedList.append(dbData[sIndex])
         
         return matchedList
+    
+    def inventory_report(self):
+        # Open file save dialog box to set file name and location
+        fname = QtWidgets.QFileDialog.getSaveFileName(self,"Save File As","","Excel File (*.xlsx)")
+        saveFileName = fname[0]
+        if not(saveFileName): return 
+
+        # Load data from SQL database
+        with sqlite3.connect('db\\invRig.db') as conn:
+            sqlQuery = f"SELECT type, code, description, batch, rig_qty, transit_qty, uom, comment " \
+                f"FROM rigInv WHERE ((rig_qty !=0) OR (transit_qty != 0)) ORDER BY code"
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            allData = c.fetchall() 
+
+            # Counts no of rows, columns n dataset
+            if allData: 
+                noOfColumns = len(list(allData[0]))
+                noOfRows = len(allData)
+            else:
+                return   
+            
+            # Load excel template file with openpyxl's load_workbook function
+            wb = load_workbook(filename='templates\\template.xlsx')
+            # Set report date to today
+            wb["Report"].cell(row=2,column=3).value = str(date.today())
+            wb["Report"].cell(row=3,column=3).value = "Field Stock"
+
+            # Fill up data to template file from SQL database
+            for i in range(noOfRows):
+                for j in range(noOfColumns):
+                    wb["Data"].cell(row=i+2,column=j+1).value = allData[i][j]
+            
+            # Refresh the template pivot table
+            pivot = wb["Report"]._pivots[0]
+            pivot.cache.refreshOnLoad = True
+            
+            # Save the workbook to save file location
+            wb.save(saveFileName)
+
+
+    def review_report(self):
+        review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
+        review_type = str(self.ui.review_type_cmb.currentText())
+        review_code = str(self.ui.review_code_cmb.currentText())
+        review_from = str(self.ui.reviewStart_dt.date().toPython()).strip()
+        review_to = str(self.ui.reviewEnd_dt.date().toPython()).strip()
+
+        if review_tbl == 'usage':
+            reportType = 'Usage'
+            if review_type == 'ALL':
+                sqlQuery = f"SELECT date, type, code, batch, usage, uom, purpose, usedby " \
+                    f"FROM usage WHERE date BETWEEN '{review_from}' AND '{review_to}'"
+            else:
+                if review_code == 'ALL':
+                    sqlQuery = f"SELECT date, type, code, batch, usage, uom, purpose, usedby " \
+                        f"FROM usage WHERE type='{review_type}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+                else:
+                    sqlQuery = f"SELECT date, type, code, batch, usage, uom, purpose, usedby " \
+                        f"FROM usage WHERE type='{review_type}' AND code='{review_code}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+
+        if review_tbl == 'received':
+            reportType = 'Goods Received'
+            if review_type == 'ALL':
+                sqlQuery = f"SELECT date, type, code, batch, (rig_qty + transit_qty) as qty, unit, comment, received_by " \
+                    f"FROM received WHERE date BETWEEN '{review_from}' AND '{review_to}'"
+            else:
+                if review_code == 'ALL':
+                    sqlQuery = f"SELECT date, type, code, batch, (rig_qty + transit_qty) as qty, unit, comment, received_by " \
+                        f"FROM received WHERE type='{review_type}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+                else:
+                    sqlQuery = f"SELECT date, type, code, batch, (rig_qty + transit_qty) as qty, unit, comment, received_by " \
+                        f"FROM received WHERE type='{review_type}' AND code='{review_code}' "\
+                            f"AND date BETWEEN '{review_from}' AND '{review_to}'"
+
+        # Open file save dialog box to set file name and location
+        fname = QtWidgets.QFileDialog.getSaveFileName(self,"Save File As","","Excel File (*.xlsx)")
+        saveFileName = fname[0]
+        if not(saveFileName): return 
+
+        # Load data from SQL database
+        with sqlite3.connect('db\\invRig.db') as conn:
+            c = conn.cursor()
+            c.execute(sqlQuery)
+            allData = c.fetchall() 
+
+            # Counts no of rows, columns n dataset
+            if allData: 
+                noOfColumns = len(list(allData[0]))
+                noOfRows = len(allData)
+            else:
+                return   
+            
+            # Load excel template file with openpyxl's load_workbook function
+            wb = load_workbook(filename='templates\\template2.xlsx')
+            # Set report date to today
+            reportDate = 'Report generated on: ' + str(date.today())
+            wb["Report"].cell(row=2,column=1).value = reportDate
+            wb["Report"].cell(row=3,column=1).value = 'Report type: ' + reportType
+
+            # Fill up data to template file from SQL database
+            for i in range(noOfRows):
+                for j in range(noOfColumns):
+                    wb["Data"].cell(row=i+2,column=j+1).value = allData[i][j]
+            
+            # Refresh the template pivot table
+            pivot = wb["Report"]._pivots[0]
+            pivot.cache.refreshOnLoad = True
+            
+            # Save the workbook to save file location
+            wb.save(saveFileName)
+        
+        

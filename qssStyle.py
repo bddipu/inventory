@@ -496,3 +496,144 @@ receiveStyle="""
 
 	
 """
+
+
+reviewStyle="""
+	QComboBox {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	QGroupBox{
+		border: none;
+		padding-right: 10px;
+		padding-left: 10px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	QLineEdit {
+		color:  blue;
+		padding-right: 5px;
+		padding-left:5px;
+		border: None;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+		/*border-bottom: 2px solid white;*/
+	}
+	QLabel {
+		padding-right: 5px;
+		padding-left:5px;
+		color: rgba(33,33,33,255);
+		font-weight: bold;
+	}
+	QTableWidget {	
+		background-color: rgba(255,255,255,200);
+		padding: 10px;
+		border-radius: 0px;
+		gridline-color: #9faeda;
+	    outline: none;
+	    font: 12pt "Segoe UI";
+	}
+	QTableWidget::item{
+		border-color: #9faeda;
+		padding-left: 5px;
+		padding-right: 5px;
+		gridline-color: #9faeda;
+	}
+	QTableWidget::item:selected{
+		background-color: rgb(189, 147, 249);
+	    color: #f8f8f2;
+	}
+	QHeaderView::section{
+		background-color: #6272a4;
+		/*max-width: 30px;*/
+		border: none;
+		border-style: none;
+	}
+	QTableWidget::horizontalHeader {	
+		background-color: #6272a4;
+	    font: 14pt "Segoe UI";
+	}
+	QHeaderView::section:horizontal
+	{
+	    border: 1px solid #6272a4;
+		background-color: #6272a4;
+		padding-top:5px;
+	    padding-bottom: 3px;
+		padding-left: 10px;
+	    padding-right: 10px;
+		border-top-left-radius: 0px;
+	    border-top-right-radius: 0px;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	}
+	QTableWidget::verticalHeader {	
+		background-color: #6272a4;
+	}
+	QHeaderView::section:vertical
+	{
+	    border: 1px solid #6272a4;
+		background-color: #6272a4;
+		padding-top: 3px;
+	    padding-bottom: 3px;
+		padding-left: 10px;
+	    padding-right: 3px;
+		color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	}
+	
+	#frame_pageReview{
+		color: white;
+		border: none;
+		background-color: rgba(212,212,212,220);
+		padding-top: 5px;
+	}
+	#frame_pageReviewDetails{
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+	#reviewStart_dt {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#reviewEnd_dt {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#review_search_btn {
+		border: 2px solid #6272a4;
+		border-radius: 5px;	
+		background-color: #6272a4;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	    padding: 3px;
+	}
+	#review_search_btn:hover {
+		background-color: #7082b6;
+		border: 2px solid #7082b6;
+	}
+	#review_search_btn:pressed {	
+		background-color: #546391;
+		border: 2px solid #ff79c6;
+	}
+	#review_report_btn {
+		border: 2px solid #6272a4;
+		border-radius: 5px;	
+		background-color: #6272a4;
+	    color: #f8f8f2;
+	    font: 12pt "Segoe UI";
+	    padding: 3px;
+	}
+	#review_report_btn:hover {
+		background-color: #7082b6;
+		border: 2px solid #7082b6;
+	}
+	#review_report_btn:pressed {	
+		background-color: #546391;
+		border: 2px solid #ff79c6;
+	}
+
+	
+"""
