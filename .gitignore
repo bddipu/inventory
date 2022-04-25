@@ -1,0 +1,4 @@
+.qt_for_python/
+.vscode/
+_pycache_/
+build/
