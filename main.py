@@ -17,12 +17,7 @@ from app import *
 
 isMaximized = False
 
-<<<<<<< HEAD
 class MainWindow(QtWidgets.QMainWindow):
-=======
-
-class MainWindow(qtObjClass):
->>>>>>> main
 
     def __init__(self):
         super(MainWindow,self).__init__()

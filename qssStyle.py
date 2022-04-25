@@ -186,27 +186,18 @@ stockViewStyle="""
 		padding-left: 10px;
 		padding-right: 10px;
 	}
-<<<<<<< HEAD:qssStyle.py
 	/*QComboBox{
 		background-color: #6272a4;
 		border-radius: 5px;
 		border: 2px solid #6272a4;
-=======
-
-	/*QComboBox{
-		/*background-color: #6272a4;*/
-		/*border-radius: 5px;
-		border: 2px;
->>>>>>> main:modules/qssStyle.py
 		padding: 5px;
 		padding-left: 10px;
-		color: white;
 	    color: #f8f8f2;
-	}*/
-	/*QComboBox:hover{
-		border: 2px;
-	}*/
-	/*QComboBox::drop-down {
+	}
+	QComboBox:hover{
+		border: 2px solid #7284b9;
+	}
+	QComboBox::drop-down {
 		subcontrol-origin: padding;
 		subcontrol-position: top right;
 		width: 25px; 

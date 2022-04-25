@@ -86,12 +86,7 @@ class guiFunction(MainWindow):
         elif btn_Name == 'btn_stockMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_stockView)
         elif btn_Name == 'btn_reviewMenu':
-<<<<<<< HEAD:func.py
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
-=======
-            pass
-            #self.ui.stackedWidget.setCurrentWidget(self.ui.pageReview)
->>>>>>> main:modules/guiFunc.py
         elif btn_Name == 'btn_exitMenu':
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
             self.ui.frame_leftMenu.setMinimumWidth(0)
@@ -167,14 +162,11 @@ class guiFunction(MainWindow):
         self.ui.received_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.received_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.received_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-<<<<<<< HEAD:func.py
         self.ui.review_tbl.verticalHeader().setVisible(False)
         self.ui.review_tbl.horizontalHeader().setStretchLastSection(True)
         self.ui.review_tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.review_tbl.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.review_tbl.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-=======
->>>>>>> main:modules/guiFunc.py
 
         # Signal-socket for close. minimize, maximize button
         self.ui.btn_closeApp.clicked.connect(lambda:self.close())
@@ -197,12 +189,7 @@ class guiFunction(MainWindow):
         self.ui.userLogin_btn.clicked.connect(lambda:appFunction.authenticate(self))
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_password)
         self.ui.userPass_txt.returnPressed.connect(lambda:appFunction.authenticate(self))
-<<<<<<< HEAD:func.py
         self.ui.appExit_btn.clicked.connect(lambda:self.close())
-=======
-        self.ui.appExit_btn.clicked.connect(lambda:appFunction.appClose(self))
-
->>>>>>> main:modules/guiFunc.py
         
         # Signal-socket for stacked-widget's stock page
         self.ui.btn_stockConsolidate.clicked.connect(lambda:appFunction.consolidate(self))
@@ -225,7 +212,6 @@ class guiFunction(MainWindow):
         self.ui.inBatch_cmb.currentTextChanged.connect(lambda:appFunction.inBatchCombo_Change(self))
         self.ui.inBatch_cmb.activated.connect(lambda:appFunction.inBatchCombo_Change(self))
         self.ui.btn_itemIn.clicked.connect(lambda:appFunction.toReceivedTable(self))
-<<<<<<< HEAD:func.py
 
         # Signal-socket for stacked-widget's review page
         self.ui.review_db_cmb.currentTextChanged.connect(lambda:appFunction.review_db_cmb_change(self))
@@ -233,8 +219,6 @@ class guiFunction(MainWindow):
         self.ui.review_type_cmb.currentTextChanged.connect(lambda:appFunction.review_type_cmb_change(self))
         self.ui.review_search_btn.clicked.connect(lambda:appFunction.review_search_btn_Clicked(self))
         self.ui.review_report_btn.clicked.connect(lambda:appFunction.review_report(self))
-=======
->>>>>>> main:modules/guiFunc.py
 
         self.ui.frame_leftMenu.setMinimumWidth(0)
         self.ui.frame_leftMenu.setMaximumWidth(0)
@@ -242,14 +226,7 @@ class guiFunction(MainWindow):
      
 class appFunction(MainWindow):
    
-<<<<<<< HEAD:func.py
     # data load from SQLite 
-=======
-    def appClose(self):
-        self.close()
-
-    # data load from SQLite to pandas dataframe 
->>>>>>> main:modules/guiFunc.py
     def appInit(self):
         with sqlite3.connect('db\\database') as conn:
             sqlQuery = f"SELECT DISTINCT type FROM rigInv ORDER BY type"
@@ -447,7 +424,6 @@ class appFunction(MainWindow):
             
             c.execute(sqlQuery,sqlValues)
             
-<<<<<<< HEAD:func.py
             try:
                 conn.commit()
                 
@@ -456,17 +432,6 @@ class appFunction(MainWindow):
                 c.execute(sqlQuery,sqlValues)
                 conn.commit()
                 QtWidgets.QMessageBox().information(self,'Success','Item added successfully to database.')
-=======
-            sqlQuery = f"INSERT INTO received VALUES (?,?,?,?,?,?,?,?,?,?)"
-            sqlValues = [iDate, iType, iCode, iBatch, iDesc, iComm, iUnit, iQty, iStandby, self.uName]
-            c.execute(sqlQuery,sqlValues)
-            try:
-                conn.commit()
-            
-                QtWidgets.QMessageBox().information(self,'Success','Entry added to inventory.')
-                #appFunction.appInit(self) # Reset inventory table
-                appFunction.itemTypeChanged(self)
->>>>>>> main:modules/guiFunc.py
                 self.ui.inCode_cmb.clear()
                 self.ui.inBatch_cmb.clear()
                 self.ui.inDescription_txt.setText('')
@@ -476,16 +441,10 @@ class appFunction(MainWindow):
                 self.ui.inTransitQty_txt.setText('')
                 self.ui.received_tbl.setRowCount(0)
                 self.ui.received_tbl.setColumnCount(0)
-<<<<<<< HEAD:func.py
                 appFunction.itemTypeChanged(self)
             except:
                 QtWidgets.QMessageBox().critical(self,'Error','An error occured while adding the item to database')
                    
-=======
-            except:
-                QtWidgets.QMessageBox().critical(self,'Error','An error occured while attempting to add record.')
-
->>>>>>> main:modules/guiFunc.py
 
     # slot for signal from 'consolidate' button
     def consolidate(self):
@@ -712,7 +671,6 @@ class appFunction(MainWindow):
                     f"WHERE type='{iType}' AND code='{iCode}'"
             appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.received_tbl, qtColName)
 
-<<<<<<< HEAD:func.py
     def review_db_cmb_change(self):
         review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
         with sqlite3.connect('db\\database') as conn:
@@ -812,8 +770,6 @@ class appFunction(MainWindow):
                 x.verticalHeader().setDefaultSectionSize(x.rowHeight(15))
 
 
-=======
->>>>>>> main:modules/guiFunc.py
     # Match comma seperated word-list in a SQLite text-data column and return all matched rows 
     def keyword_match(keyWord, dbData, cData):
         matchedList =[]
@@ -825,7 +781,6 @@ class appFunction(MainWindow):
                     if (b.lower()).strip() == (j.lower()).strip(): 
                         matchedList.append(dbData[sIndex])
         
-<<<<<<< HEAD:func.py
         return matchedList
     
     def inventory_report(self):
@@ -946,6 +901,3 @@ class appFunction(MainWindow):
             wb.save(saveFileName)
         
         
-=======
-        return matchedList
->>>>>>> main:modules/guiFunc.py
