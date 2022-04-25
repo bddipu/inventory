@@ -228,7 +228,7 @@ class appFunction(MainWindow):
    
     # data load from SQLite 
     def appInit(self):
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             sqlQuery = f"SELECT DISTINCT type FROM rigInv ORDER BY type"
             c = conn.cursor()
             c.execute(sqlQuery)
@@ -258,7 +258,7 @@ class appFunction(MainWindow):
         # Do not continue if username ot password left empty
         if (uName in ['',None,'Nan']) | (uPass in ['',None,'Nan']) : return
         # Get username from database
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             c = conn.cursor()
             c.execute("SELECT * FROM appuser")
             uData = c.fetchall()
@@ -285,7 +285,7 @@ class appFunction(MainWindow):
                                 return
                             else:                        
                                 sqlQuery = f"UPDATE appuser SET upass='{uPass}' WHERE uname='{uName}'"
-                                with sqlite3.connect('db\\invRig.db') as conn:
+                                with sqlite3.connect('db\\database') as conn:
                                     c = conn.cursor()
                                     c.execute(sqlQuery)
                                     conn.commit()
@@ -303,7 +303,7 @@ class appFunction(MainWindow):
                         return
                     else:
                         sqlQuery = f"INSERT INTO appuser VALUES ('{uName}', '{uPass}')"
-                        with sqlite3.connect('db\\invRig.db') as conn:
+                        with sqlite3.connect('db\\database') as conn:
                             c = conn.cursor()
                             c.execute(sqlQuery)
                             conn.commit()
@@ -314,7 +314,7 @@ class appFunction(MainWindow):
     
     def viewAllClicked(self):
         itemType = str(self.ui.itemList_cmb.currentText())
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             qtColName = ['Code','Description','Batch','Rig Quantity','Standby Qty','UOM', 'Comment']
             sqlQuery = f"SELECT code, description, batch, rig_qty, transit_qty, uom, comment " \
                 f"FROM rigInv WHERE type='{itemType}' AND ((rig_qty !=0) OR (transit_qty != 0)) ORDER BY code"
@@ -324,7 +324,7 @@ class appFunction(MainWindow):
     def itemTypeChanged(self):
         appFunction.viewAllClicked(self)
         itemType = str(self.ui.itemList_cmb.currentText())
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             sqlQuery = f"SELECT DISTINCT code FROM rigInv WHERE type='{itemType}'ORDER BY code"
             c = conn.cursor()
             c.execute(sqlQuery)
@@ -335,7 +335,7 @@ class appFunction(MainWindow):
     def itemCodeChanged(self):
         itemType = str(self.ui.itemList_cmb.currentText())
         itemCode = str(self.ui.itemCode_cmb.currentText())
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             qtColName = ['Code','Description','Batch','Rig Quantity','Standby Qty','UOM', 'Comment']
             sqlQuery = f"SELECT code, description, batch, rig_qty, transit_qty, uom, comment " \
                 f"FROM rigInv WHERE type='{itemType}' AND code='{itemCode}' AND ((rig_qty !=0) OR (transit_qty != 0)) ORDER BY code"
@@ -399,7 +399,7 @@ class appFunction(MainWindow):
             return
         
         # update rigInv table and received table
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             # Check for same batch at the rig
             sqlQuery = f"SELECT batch, rig_qty, transit_qty FROM rigInv WHERE "\
                 f"type='{iType}' AND code='{iCode}' AND batch='{iBatch}' "\
@@ -449,7 +449,7 @@ class appFunction(MainWindow):
     # slot for signal from 'consolidate' button
     def consolidate(self):
         itemType = str(self.ui.itemList_cmb.currentText())
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             qtColName = ['Code','Rig Qty','Standby']
             sqlQuery = f"SELECT code, SUM(rig_qty), SUM(transit_qty)" \
                 f"FROM rigInv WHERE type='{itemType}' AND ((rig_qty !=0) OR (transit_qty != 0)) " \
@@ -474,7 +474,7 @@ class appFunction(MainWindow):
                     dType = self.ui.itemList_cmb.currentText()
                     dCode = self.ui.item_tbl.item(cRow,0).text()
                     dBatch = self.ui.item_tbl.item(cRow,2).text()
-                    with sqlite3.connect('db\\invRig.db') as conn:
+                    with sqlite3.connect('db\\database') as conn:
                         sqlQuery = f"UPDATE rigInv SET {dataPair[cColumn]}=? " \
                             f"WHERE type=? AND code=? AND batch=?"
                         sqlValues = [response, dType, dCode, dBatch]
@@ -507,7 +507,7 @@ class appFunction(MainWindow):
                 self.ui.outInfo_txt.setText('')
 
                 iCode = str(self.ui.outCode_txt.text())
-                with sqlite3.connect('db\\invRig.db') as conn: 
+                with sqlite3.connect('db\\database') as conn: 
                     qtColName = ['Date', 'Code', 'Batch', 'Usage','UOM', 'Comment', 'Used By']
                     sqlQuery = f"SELECT date, code, batch, usage, uom, "\
                         f"purpose, usedby FROM usage WHERE code='{iCode}'"
@@ -533,7 +533,7 @@ class appFunction(MainWindow):
                     rStock = oStock + mQty
                     rStandby = oStandby - mQty
 
-                    with sqlite3.connect('db\\invRig.db') as conn:
+                    with sqlite3.connect('db\\database') as conn:
                         sqlQuery = f"UPDATE rigInv SET rig_qty=?, transit_qty=? " \
                             f"WHERE type=? AND code=? AND batch=? AND ((rig_qty !=0) OR (transit_qty != 0))"
                         sqlValues = [rStock, rStandby, oType, oCode, oBatch]
@@ -566,7 +566,7 @@ class appFunction(MainWindow):
                     rStock = oStock - mQty
                     rStandby = oStandby + mQty
 
-                    with sqlite3.connect('db\\invRig.db') as conn:
+                    with sqlite3.connect('db\\database') as conn:
                         sqlQuery = f"UPDATE rigInv SET rig_qty=?, transit_qty=? " \
                             f"WHERE type=? AND code=? AND batch=? AND ((rig_qty !=0) OR (transit_qty != 0))"
                         sqlValues = [rStock, rStandby, oType, oCode, oBatch]
@@ -609,7 +609,7 @@ class appFunction(MainWindow):
                 f"{usedQty} {oUnit} {oCode} will be removed from inventory. Are you sure?")
             if uMessage != QtWidgets.QMessageBox.Yes: return
             revisedRigQty = stockQty - usedQty
-            with sqlite3.connect('db\\invRig.db') as conn:
+            with sqlite3.connect('db\\database') as conn:
                 sqlQuery = f"UPDATE rigInv SET rig_qty=? " \
                     f"WHERE type=? AND code=? AND batch=? AND (rig_qty != 0)"
                 sqlValues = [revisedRigQty, oType, oCode, oBatch]
@@ -629,7 +629,7 @@ class appFunction(MainWindow):
     def inTypeCombo_Change(self):
         itemType = str(self.ui.inType_cmb.currentText()) 
         if itemType != "":
-            with sqlite3.connect('db\\invRig.db') as conn:
+            with sqlite3.connect('db\\database') as conn:
                 sqlQuery = f"SELECT DISTINCT code FROM rigInv WHERE type='{itemType}'ORDER BY code"
                 c = conn.cursor()
                 c.execute(sqlQuery)
@@ -648,7 +648,7 @@ class appFunction(MainWindow):
         itemType = str(self.ui.inType_cmb.currentText())
         itemCode = str(self.ui.inCode_cmb.currentText())
         if ((itemType!="") | (itemCode != "")):
-                with sqlite3.connect('db\\invRig.db') as conn:
+                with sqlite3.connect('db\\database') as conn:
                     sqlQuery = f"SELECT DISTINCT batch FROM rigInv "\
                         f"WHERE type='{itemType}' AND code='{itemCode}' ORDER BY batch"
                     c = conn.cursor()
@@ -664,7 +664,7 @@ class appFunction(MainWindow):
 
         if (iCode == "") | (iBatch == ""): return 
 
-        with sqlite3.connect('db\\invRig.db') as conn: 
+        with sqlite3.connect('db\\database') as conn: 
             qtColName = ['Date', 'Code', 'Batch','Rig Quantity','Standby Qty', 'Comment', 'Received By']
             sqlQuery = f"SELECT date, code, batch, rig_qty, "\
                 f"transit_qty, comment, received_by FROM received "\
@@ -673,14 +673,14 @@ class appFunction(MainWindow):
 
     def review_db_cmb_change(self):
         review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             sqlQuery = f"SELECT DISTINCT type FROM {review_tbl} ORDER BY type"
             c = conn.cursor()
             c.execute(sqlQuery)
             val = c.fetchall()
             self.ui.review_type_cmb.clear()
-            self.ui.review_type_cmb.insertItems(0,['ALL'])
             self.ui.review_type_cmb.insertItems(0, [i[0] for i in val])
+        self.ui.review_type_cmb.insertItems(0,['ALL'])
 
     def review_type_cmb_change(self):
         review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
@@ -688,15 +688,15 @@ class appFunction(MainWindow):
         
         if (review_type == "") : return
 
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             sqlQuery = f"SELECT DISTINCT code FROM {review_tbl} "\
                             f"WHERE type='{review_type}' ORDER BY code"
             c = conn.cursor()
             c.execute(sqlQuery)
             val = c.fetchall()
             self.ui.review_code_cmb.clear()
-            self.ui.review_code_cmb.insertItems(0,['ALL'])
             self.ui.review_code_cmb.insertItems(0, [i[0] for i in val])
+        self.ui.review_code_cmb.insertItems(0,['ALL'])
         
     def review_search_btn_Clicked(self):
         review_tbl = str(self.ui.review_db_cmb.currentText()).lower()
@@ -736,7 +736,7 @@ class appFunction(MainWindow):
                         f"FROM received WHERE type='{review_type}' AND code='{review_code}' "\
                             f"AND date BETWEEN '{review_from}' AND '{review_to}'"
 
-        with sqlite3.connect('db\\invRig.db') as conn:           
+        with sqlite3.connect('db\\database') as conn:           
             # appFunction.fillTable_sql(self, conn, sqlQuery, self.ui.review_tbl, qtColName)
             c = conn.cursor()
             c.execute(sqlQuery)
@@ -790,7 +790,7 @@ class appFunction(MainWindow):
         if not(saveFileName): return 
 
         # Load data from SQL database
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             sqlQuery = f"SELECT type, code, description, batch, rig_qty, transit_qty, uom, comment " \
                 f"FROM rigInv WHERE ((rig_qty !=0) OR (transit_qty != 0)) ORDER BY code"
             c = conn.cursor()
@@ -866,7 +866,7 @@ class appFunction(MainWindow):
         if not(saveFileName): return 
 
         # Load data from SQL database
-        with sqlite3.connect('db\\invRig.db') as conn:
+        with sqlite3.connect('db\\database') as conn:
             c = conn.cursor()
             c.execute(sqlQuery)
             allData = c.fetchall() 
@@ -883,7 +883,10 @@ class appFunction(MainWindow):
             # Set report date to today
             reportDate = 'Report generated on: ' + str(date.today())
             wb["Report"].cell(row=2,column=1).value = reportDate
-            wb["Report"].cell(row=3,column=1).value = 'Report type: ' + reportType
+            wb["Report"].cell(row=3,column=1).value = 'Report style: ' + reportType
+            wb["Report"].cell(row=4,column=1).value = 'Selected Type: ' + review_type
+            wb["Report"].cell(row=5,column=1).value = 'Selected Code: ' + review_code
+            wb["Report"].cell(row=6,column=1).value = '(between ' + review_from + ' and ' + review_to + ')'
 
             # Fill up data to template file from SQL database
             for i in range(noOfRows):

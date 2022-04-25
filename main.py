@@ -9,11 +9,10 @@ import datetime
 from sideGrip import SideGrip
 from qssStyle import appStyle, stockViewStyle, usageStyle, receiveStyle, reviewStyle
 import images
-
-
-from guiFunc import *
+from func import *
 # import resources_rc
 from app import *
+
 # qtObjName, qtObjClass = loadUiType('ui\\app.ui')
 
 isMaximized = False

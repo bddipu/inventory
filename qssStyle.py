@@ -186,7 +186,6 @@ stockViewStyle="""
 		padding-left: 10px;
 		padding-right: 10px;
 	}
-
 	/*QComboBox{
 		background-color: #6272a4;
 		border-radius: 5px;
@@ -226,19 +225,15 @@ stockViewStyle="""
 		background-color: #546391;
 		border: 2px solid #ff79c6;
 	}
-
 """
 
-
 usageStyle="""
-
 	#frame_pageUsage{
 		color: white;
 		border: none;
 		background-color: rgba(212,212,212,220);
 		padding-top: 15px;
 	}
-
 	QTableWidget {	
 		background-color: rgba(255,255,255,200);
 		padding: 10px;
@@ -376,11 +371,7 @@ usageStyle="""
 """
 
 receiveStyle="""
-	QComboBox {
-		border: none;
-		background-color: lightyellow;
-		border-bottom: 2px solid red;
-	}
+
 	QGroupBox{
 		border: none;
 		padding-right: 10px;
@@ -459,18 +450,38 @@ receiveStyle="""
 	    font: 12pt "Segoe UI";
 	}
 	
-	#frame_pageReceive{
+	#frame_pageReceive {
 		color: white;
 		border: none;
 		background-color: rgba(212,212,212,220);
 		padding-top: 5px;
 	}
-	#inUserName_txt{
+	#inUserName_txt {
 		color:  blue;
 		background-color: rgba(212,212,212,220);
 		padding-right: 5px;
 		padding-left:5px;
 		border: None;
+	}
+	#inType_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#inCode_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#inBatch_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+	}
+	#inUnit_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
 	}
 	#inDate_dt {
 		border: none;
@@ -492,9 +503,7 @@ receiveStyle="""
 	#btn_itemIn:pressed {	
 		background-color: #546391;
 		border: 2px solid #ff79c6;
-	}
-
-	
+	}	
 """
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'appHBkiwA.ui'
+## Form generated from reading UI file 'appJOsRNJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.2.1
 ##
@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(950, 549)
+        MainWindow.resize(993, 548)
         self.widget_app = QWidget(MainWindow)
         self.widget_app.setObjectName(u"widget_app")
         self.widget_app.setMinimumSize(QSize(950, 500))
@@ -1262,7 +1262,17 @@ class Ui_MainWindow(object):
 
         self.inCode_cmb = QComboBox(self.frame_28)
         self.inCode_cmb.setObjectName(u"inCode_cmb")
-        self.inCode_cmb.setFont(font3)
+        font5 = QFont()
+        font5.setPointSize(12)
+        font5.setBold(False)
+        font5.setItalic(False)
+        self.inCode_cmb.setFont(font5)
+        self.inCode_cmb.setStyleSheet(u"	#inCode_cmb {\n"
+"		border: none;\n"
+"		background-color: lightyellow;\n"
+"		border-bottom: 2px solid red;\n"
+"		font: 12pt \"Segoe UI\";\n"
+"	}")
         self.inCode_cmb.setEditable(True)
 
         self.horizontalLayout_36.addWidget(self.inCode_cmb)
@@ -1290,7 +1300,13 @@ class Ui_MainWindow(object):
 
         self.inBatch_cmb = QComboBox(self.frame_29)
         self.inBatch_cmb.setObjectName(u"inBatch_cmb")
-        self.inBatch_cmb.setFont(font3)
+        self.inBatch_cmb.setFont(font5)
+        self.inBatch_cmb.setStyleSheet(u"	#inBatch_cmb {\n"
+"		border: none;\n"
+"		background-color: lightyellow;\n"
+"		border-bottom: 2px solid red;\n"
+"		font: 12pt \"Segoe UI\";\n"
+"	}")
         self.inBatch_cmb.setEditable(True)
 
         self.horizontalLayout_37.addWidget(self.inBatch_cmb)
@@ -1400,8 +1416,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_29.setContentsMargins(0, 0, 0, 0)
         self.label_31 = QLabel(self.frame_14)
         self.label_31.setObjectName(u"label_31")
-        self.label_31.setMinimumSize(QSize(120, 0))
-        self.label_31.setMaximumSize(QSize(100, 16777215))
+        self.label_31.setMinimumSize(QSize(140, 0))
+        self.label_31.setMaximumSize(QSize(140, 16777215))
         self.label_31.setFont(font3)
         self.label_31.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -1430,8 +1446,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_30.setContentsMargins(0, 0, 0, 0)
         self.label_18 = QLabel(self.frame_15)
         self.label_18.setObjectName(u"label_18")
-        self.label_18.setMinimumSize(QSize(120, 0))
-        self.label_18.setMaximumSize(QSize(100, 16777215))
+        self.label_18.setMinimumSize(QSize(140, 0))
+        self.label_18.setMaximumSize(QSize(140, 16777215))
         self.label_18.setFont(font3)
         self.label_18.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -1439,7 +1455,7 @@ class Ui_MainWindow(object):
 
         self.inDate_dt = QDateEdit(self.frame_15)
         self.inDate_dt.setObjectName(u"inDate_dt")
-        self.inDate_dt.setMinimumSize(QSize(200, 0))
+        self.inDate_dt.setMinimumSize(QSize(160, 0))
         self.inDate_dt.setMaximumSize(QSize(16777215, 16777215))
         self.inDate_dt.setFont(font3)
         self.inDate_dt.setCalendarPopup(True)
@@ -1460,8 +1476,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_38.setContentsMargins(0, 0, 0, 0)
         self.label_35 = QLabel(self.frame_30)
         self.label_35.setObjectName(u"label_35")
-        self.label_35.setMinimumSize(QSize(120, 0))
-        self.label_35.setMaximumSize(QSize(100, 16777215))
+        self.label_35.setMinimumSize(QSize(140, 0))
+        self.label_35.setMaximumSize(QSize(140, 16777215))
         self.label_35.setFont(font3)
         self.label_35.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -1495,8 +1511,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_41.setContentsMargins(0, 0, 0, 0)
         self.label_37 = QLabel(self.frame_33)
         self.label_37.setObjectName(u"label_37")
-        self.label_37.setMinimumSize(QSize(120, 0))
-        self.label_37.setMaximumSize(QSize(100, 16777215))
+        self.label_37.setMinimumSize(QSize(140, 0))
+        self.label_37.setMaximumSize(QSize(140, 16777215))
         self.label_37.setFont(font3)
         self.label_37.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -1530,8 +1546,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_32.setContentsMargins(0, 0, 0, 0)
         self.outUsage_lbl_2 = QLabel(self.frame_23)
         self.outUsage_lbl_2.setObjectName(u"outUsage_lbl_2")
-        self.outUsage_lbl_2.setMinimumSize(QSize(120, 0))
-        self.outUsage_lbl_2.setMaximumSize(QSize(100, 16777215))
+        self.outUsage_lbl_2.setMinimumSize(QSize(140, 0))
+        self.outUsage_lbl_2.setMaximumSize(QSize(140, 16777215))
         self.outUsage_lbl_2.setFont(font3)
         self.outUsage_lbl_2.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -1539,7 +1555,13 @@ class Ui_MainWindow(object):
 
         self.inUnit_cmb = QComboBox(self.frame_23)
         self.inUnit_cmb.setObjectName(u"inUnit_cmb")
-        self.inUnit_cmb.setFont(font3)
+        self.inUnit_cmb.setFont(font5)
+        self.inUnit_cmb.setStyleSheet(u"	#inUnit_cmb {\n"
+"		border: none;\n"
+"		background-color: lightyellow;\n"
+"		border-bottom: 2px solid red;\n"
+"		font: 12pt \"Segoe UI\";\n"
+"	}")
         self.inUnit_cmb.setEditable(True)
 
         self.horizontalLayout_32.addWidget(self.inUnit_cmb)
@@ -1642,8 +1664,8 @@ class Ui_MainWindow(object):
         self.frame_pageReviewDetails.setObjectName(u"frame_pageReviewDetails")
         sizePolicy2.setHeightForWidth(self.frame_pageReviewDetails.sizePolicy().hasHeightForWidth())
         self.frame_pageReviewDetails.setSizePolicy(sizePolicy2)
-        self.frame_pageReviewDetails.setMinimumSize(QSize(0, 200))
-        self.frame_pageReviewDetails.setMaximumSize(QSize(16777215, 200))
+        self.frame_pageReviewDetails.setMinimumSize(QSize(0, 220))
+        self.frame_pageReviewDetails.setMaximumSize(QSize(16777215, 220))
         self.frame_pageReviewDetails.setFrameShape(QFrame.NoFrame)
         self.frame_pageReviewDetails.setFrameShadow(QFrame.Raised)
         self.verticalLayout_27 = QVBoxLayout(self.frame_pageReviewDetails)
@@ -1651,17 +1673,21 @@ class Ui_MainWindow(object):
         self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_27.addItem(self.verticalSpacer_6)
+
         self.frame_48 = QFrame(self.frame_pageReviewDetails)
         self.frame_48.setObjectName(u"frame_48")
-        self.frame_48.setMinimumSize(QSize(0, 130))
-        self.frame_48.setMaximumSize(QSize(16777215, 130))
+        self.frame_48.setMinimumSize(QSize(0, 120))
+        self.frame_48.setMaximumSize(QSize(16777215, 120))
         self.frame_48.setFrameShape(QFrame.StyledPanel)
         self.frame_48.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_57 = QHBoxLayout(self.frame_48)
         self.horizontalLayout_57.setSpacing(0)
         self.horizontalLayout_57.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_57.setObjectName(u"horizontalLayout_57")
-        self.horizontalLayout_57.setContentsMargins(0, 20, 0, 0)
+        self.horizontalLayout_57.setContentsMargins(0, 0, 0, 0)
         self.frame_45 = QFrame(self.frame_48)
         self.frame_45.setObjectName(u"frame_45")
         self.frame_45.setFrameShape(QFrame.StyledPanel)
@@ -1836,14 +1862,15 @@ class Ui_MainWindow(object):
 
         self.frame_24 = QFrame(self.frame_pageReviewDetails)
         self.frame_24.setObjectName(u"frame_24")
-        self.frame_24.setMaximumSize(QSize(16777215, 16777215))
+        self.frame_24.setMinimumSize(QSize(0, 80))
+        self.frame_24.setMaximumSize(QSize(16777215, 80))
         self.frame_24.setFrameShape(QFrame.StyledPanel)
         self.frame_24.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_33 = QHBoxLayout(self.frame_24)
-        self.horizontalLayout_33.setSpacing(0)
+        self.horizontalLayout_33.setSpacing(10)
         self.horizontalLayout_33.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_33.setObjectName(u"horizontalLayout_33")
-        self.horizontalLayout_33.setContentsMargins(-1, 20, -1, -1)
+        self.horizontalLayout_33.setContentsMargins(0, 0, 0, 0)
         self.frame_32 = QFrame(self.frame_24)
         self.frame_32.setObjectName(u"frame_32")
         self.frame_32.setMinimumSize(QSize(0, 0))
@@ -1853,7 +1880,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_26.setSpacing(0)
         self.verticalLayout_26.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
-        self.verticalLayout_26.setContentsMargins(10, 10, 10, 0)
+        self.verticalLayout_26.setContentsMargins(9, 0, 10, 0)
         self.review_keyword_lbl = QLabel(self.frame_32)
         self.review_keyword_lbl.setObjectName(u"review_keyword_lbl")
         self.review_keyword_lbl.setMinimumSize(QSize(400, 25))

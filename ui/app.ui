@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>950</width>
-    <height>549</height>
+    <width>993</width>
+    <height>548</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -3225,8 +3225,18 @@
                                     <widget class="QComboBox" name="inCode_cmb">
                                      <property name="font">
                                       <font>
-                                       <pointsize>11</pointsize>
+                                       <pointsize>12</pointsize>
+                                       <italic>false</italic>
+                                       <bold>false</bold>
                                       </font>
+                                     </property>
+                                     <property name="styleSheet">
+                                      <string notr="true">	#inCode_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+		font: 12pt &quot;Segoe UI&quot;;
+	}</string>
                                      </property>
                                      <property name="editable">
                                       <bool>true</bool>
@@ -3291,8 +3301,18 @@
                                     <widget class="QComboBox" name="inBatch_cmb">
                                      <property name="font">
                                       <font>
-                                       <pointsize>11</pointsize>
+                                       <pointsize>12</pointsize>
+                                       <italic>false</italic>
+                                       <bold>false</bold>
                                       </font>
+                                     </property>
+                                     <property name="styleSheet">
+                                      <string notr="true">	#inBatch_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+		font: 12pt &quot;Segoe UI&quot;;
+	}</string>
                                      </property>
                                      <property name="editable">
                                       <bool>true</bool>
@@ -3583,13 +3603,13 @@
                                     <widget class="QLabel" name="label_31">
                                      <property name="minimumSize">
                                       <size>
-                                       <width>120</width>
+                                       <width>140</width>
                                        <height>0</height>
                                       </size>
                                      </property>
                                      <property name="maximumSize">
                                       <size>
-                                       <width>100</width>
+                                       <width>140</width>
                                        <height>16777215</height>
                                       </size>
                                      </property>
@@ -3664,13 +3684,13 @@
                                     <widget class="QLabel" name="label_18">
                                      <property name="minimumSize">
                                       <size>
-                                       <width>120</width>
+                                       <width>140</width>
                                        <height>0</height>
                                       </size>
                                      </property>
                                      <property name="maximumSize">
                                       <size>
-                                       <width>100</width>
+                                       <width>140</width>
                                        <height>16777215</height>
                                       </size>
                                      </property>
@@ -3691,7 +3711,7 @@
                                     <widget class="QDateEdit" name="inDate_dt">
                                      <property name="minimumSize">
                                       <size>
-                                       <width>200</width>
+                                       <width>160</width>
                                        <height>0</height>
                                       </size>
                                      </property>
@@ -3742,13 +3762,13 @@
                                     <widget class="QLabel" name="label_35">
                                      <property name="minimumSize">
                                       <size>
-                                       <width>120</width>
+                                       <width>140</width>
                                        <height>0</height>
                                       </size>
                                      </property>
                                      <property name="maximumSize">
                                       <size>
-                                       <width>100</width>
+                                       <width>140</width>
                                        <height>16777215</height>
                                       </size>
                                      </property>
@@ -3839,13 +3859,13 @@
                                     <widget class="QLabel" name="label_37">
                                      <property name="minimumSize">
                                       <size>
-                                       <width>120</width>
+                                       <width>140</width>
                                        <height>0</height>
                                       </size>
                                      </property>
                                      <property name="maximumSize">
                                       <size>
-                                       <width>100</width>
+                                       <width>140</width>
                                        <height>16777215</height>
                                       </size>
                                      </property>
@@ -3936,13 +3956,13 @@
                                     <widget class="QLabel" name="outUsage_lbl_2">
                                      <property name="minimumSize">
                                       <size>
-                                       <width>120</width>
+                                       <width>140</width>
                                        <height>0</height>
                                       </size>
                                      </property>
                                      <property name="maximumSize">
                                       <size>
-                                       <width>100</width>
+                                       <width>140</width>
                                        <height>16777215</height>
                                       </size>
                                      </property>
@@ -3963,8 +3983,18 @@
                                     <widget class="QComboBox" name="inUnit_cmb">
                                      <property name="font">
                                       <font>
-                                       <pointsize>11</pointsize>
+                                       <pointsize>12</pointsize>
+                                       <italic>false</italic>
+                                       <bold>false</bold>
                                       </font>
+                                     </property>
+                                     <property name="styleSheet">
+                                      <string notr="true">	#inUnit_cmb {
+		border: none;
+		background-color: lightyellow;
+		border-bottom: 2px solid red;
+		font: 12pt &quot;Segoe UI&quot;;
+	}</string>
                                      </property>
                                      <property name="editable">
                                       <bool>true</bool>
@@ -4192,13 +4222,13 @@
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>200</height>
+                           <height>220</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
                            <width>16777215</width>
-                           <height>200</height>
+                           <height>220</height>
                           </size>
                          </property>
                          <property name="frameShape">
@@ -4224,17 +4254,30 @@
                            <number>0</number>
                           </property>
                           <item>
+                           <spacer name="verticalSpacer_6">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
                            <widget class="QFrame" name="frame_48">
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
-                              <height>130</height>
+                              <height>120</height>
                              </size>
                             </property>
                             <property name="maximumSize">
                              <size>
                               <width>16777215</width>
-                              <height>130</height>
+                              <height>120</height>
                              </size>
                             </property>
                             <property name="frameShape">
@@ -4251,7 +4294,7 @@
                               <number>0</number>
                              </property>
                              <property name="topMargin">
-                              <number>20</number>
+                              <number>0</number>
                              </property>
                              <property name="rightMargin">
                               <number>0</number>
@@ -4683,10 +4726,16 @@
                           </item>
                           <item>
                            <widget class="QFrame" name="frame_24">
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>80</height>
+                             </size>
+                            </property>
                             <property name="maximumSize">
                              <size>
                               <width>16777215</width>
-                              <height>16777215</height>
+                              <height>80</height>
                              </size>
                             </property>
                             <property name="frameShape">
@@ -4696,8 +4745,20 @@
                              <enum>QFrame::Raised</enum>
                             </property>
                             <layout class="QHBoxLayout" name="horizontalLayout_33">
+                             <property name="spacing">
+                              <number>10</number>
+                             </property>
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
                              <property name="topMargin">
-                              <number>20</number>
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
                              </property>
                              <item>
                               <widget class="QFrame" name="frame_32">
@@ -4718,10 +4779,10 @@
                                  <number>0</number>
                                 </property>
                                 <property name="leftMargin">
-                                 <number>10</number>
+                                 <number>9</number>
                                 </property>
                                 <property name="topMargin">
-                                 <number>10</number>
+                                 <number>0</number>
                                 </property>
                                 <property name="rightMargin">
                                  <number>10</number>
