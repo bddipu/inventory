@@ -1,17 +1,33 @@
 import sys
 from PySide6 import QtWidgets, QtCore, QtGui
-from PySide6.QtUiTools import loadUiType
+from openpyxl import load_workbook
+from datetime import date
+import sqlite3
+import datetime
+
 # Custom import
-from modules.guiFunc import *
+from sideGrip import SideGrip
+from qssStyle import appStyle, stockViewStyle, usageStyle, receiveStyle, reviewStyle
+import images
+from func import *
+# import resources_rc
+from app import *
 
-qtObjName, qtObjClass = loadUiType('ui\\app.ui')
+# qtObjName, qtObjClass = loadUiType('ui\\app.ui')
 
+isMaximized = False
+
+<<<<<<< HEAD
+class MainWindow(QtWidgets.QMainWindow):
+=======
 
 class MainWindow(qtObjClass):
+>>>>>>> main
 
     def __init__(self):
-        qtObjClass.__init__(self)
-        self.ui = qtObjName()
+        super(MainWindow,self).__init__()
+        self.ui = Ui_MainWindow()
+        # self.ui = qtObjName()
         self.ui.setupUi(self)
 
         guiFunction.uiInit(self)
